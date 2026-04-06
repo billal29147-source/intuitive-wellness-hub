@@ -7,13 +7,13 @@ import GamesPage from "@/pages/GamesPage";
 import SettingsMenu from "@/components/SettingsMenu";
 
 const pages = [
-  { id: "games", label: "Games", icon: Gamepad2 },
-  { id: "home", label: "Home", icon: Home },
+  { id: "games", label: "Compete", icon: Gamepad2 },
   { id: "workout", label: "Workout", icon: Dumbbell },
+  { id: "home", label: "Home", icon: Home },
   { id: "food", label: "Food", icon: UtensilsCrossed },
 ];
 
-const HOME_INDEX = 1;
+const HOME_INDEX = 2;
 
 const SwipeableApp = () => {
   const [currentPage, setCurrentPage] = useState(HOME_INDEX);
