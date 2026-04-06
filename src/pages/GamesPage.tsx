@@ -19,7 +19,7 @@ const GamesPage = () => {
       <div className="mb-6">
         <p className="text-sm text-muted-foreground">Compete</p>
         <h1 className="text-2xl font-bold flex items-center gap-2">
-          <Gamepad2 className="w-6 h-6 text-health-progress" /> Games & Challenges
+          <Gamepad2 className="w-6 h-6 text-health-progress" /> Competitions & Challenges
         </h1>
       </div>
 

@@ -7,13 +7,13 @@ import GamesPage from "@/pages/GamesPage";
 import SettingsMenu from "@/components/SettingsMenu";
 
 const pages = [
-  { id: "games", label: "Games", icon: Gamepad2 },
-  { id: "home", label: "Home", icon: Home },
+  { id: "games", label: "Compete", icon: Gamepad2 },
   { id: "workout", label: "Workout", icon: Dumbbell },
+  { id: "home", label: "Home", icon: Home },
   { id: "food", label: "Food", icon: UtensilsCrossed },
 ];
 
-const HOME_INDEX = 1;
+const HOME_INDEX = 2;
 
 const SwipeableApp = () => {
   const [currentPage, setCurrentPage] = useState(HOME_INDEX);
@@ -27,7 +27,7 @@ const SwipeableApp = () => {
   const handleNavigate = useCallback((page: number) => {
     // Map from HomePage's page indices to our page order
     // 1=Workout, 2=Food, 3=Games
-    const map: Record<number, number> = { 1: 2, 2: 3, 3: 0 };
+    const map: Record<number, number> = { 1: 1, 2: 3, 3: 0 };
     setCurrentPage(map[page] ?? HOME_INDEX);
   }, []);
 
@@ -86,8 +86,8 @@ const SwipeableApp = () => {
         onTouchEnd={handleTouchEnd}
       >
         <div className="w-full h-full flex-shrink-0 overflow-y-auto"><GamesPage /></div>
-        <div className="w-full h-full flex-shrink-0 overflow-y-auto"><HomePage onNavigate={handleNavigate} /></div>
         <div className="w-full h-full flex-shrink-0 overflow-y-auto"><WorkoutPage /></div>
+        <div className="w-full h-full flex-shrink-0 overflow-y-auto"><HomePage onNavigate={handleNavigate} /></div>
         <div className="w-full h-full flex-shrink-0 overflow-y-auto"><FoodPage /></div>
       </div>
 
