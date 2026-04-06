@@ -47,6 +47,14 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        health: {
+          steps: "hsl(var(--health-steps))",
+          heart: "hsl(var(--health-heart))",
+          sleep: "hsl(var(--health-sleep))",
+          calories: "hsl(var(--health-calories))",
+          progress: "hsl(var(--health-progress))",
+          hydration: "hsl(var(--health-hydration))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
