@@ -27,7 +27,7 @@ const SwipeableApp = () => {
   const handleNavigate = useCallback((page: number) => {
     // Map from HomePage's page indices to our page order
     // 1=Workout, 2=Food, 3=Games
-    const map: Record<number, number> = { 1: 2, 2: 3, 3: 0 };
+    const map: Record<number, number> = { 1: 1, 2: 3, 3: 0 };
     setCurrentPage(map[page] ?? HOME_INDEX);
   }, []);
 
