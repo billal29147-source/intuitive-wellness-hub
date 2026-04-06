@@ -7,7 +7,7 @@ interface SettingsMenuProps {
 
 const settingsItems = [
   { icon: Bluetooth, label: "Bluetooth", subtitle: "Connected", hasToggle: true, on: true },
-  { icon: Watch, label: "Watch Pairing", subtitle: "FitWatch Pro", hasToggle: false },
+  { icon: Watch, label: "Watch Pairing", subtitle: "Alex's Rihla Watch", hasToggle: false },
   { icon: Bell, label: "Notifications", subtitle: "All enabled", hasToggle: true, on: true },
   { icon: Moon, label: "Sleep Mode", subtitle: "10 PM - 6 AM", hasToggle: true, on: false },
   { icon: Shield, label: "Privacy", subtitle: "Manage data", hasToggle: false },

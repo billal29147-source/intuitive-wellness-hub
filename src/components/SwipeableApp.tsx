@@ -76,7 +76,7 @@ const SwipeableApp = () => {
   const translateX = -currentPage * 100 + (dragOffset / window.innerWidth) * 100;
 
   return (
-    <div className="relative h-[100dvh] w-full max-w-md mx-auto overflow-hidden bg-background">
+    <div className="relative h-[100dvh] w-full max-w-lg mx-auto overflow-hidden bg-background flex flex-col items-center">
       {/* Swipeable Pages */}
       <div
         className={`flex h-[calc(100dvh-4rem)] ${isDragging ? "" : "transition-transform duration-300 ease-out"}`}
