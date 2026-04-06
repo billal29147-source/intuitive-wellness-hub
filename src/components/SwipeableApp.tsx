@@ -76,19 +76,19 @@ const SwipeableApp = () => {
   const translateX = -currentPage * 100 + (dragOffset / window.innerWidth) * 100;
 
   return (
-    <div className="relative h-[100dvh] w-full max-w-lg mx-auto overflow-hidden bg-background flex flex-col items-center">
+    <div className="relative h-[100dvh] w-full max-w-lg mx-auto overflow-hidden bg-background">
       {/* Swipeable Pages */}
       <div
-        className={`flex h-[calc(100dvh-4rem)] ${isDragging ? "" : "transition-transform duration-300 ease-out"}`}
+        className={`flex h-[calc(100dvh-4rem)] w-full ${isDragging ? "" : "transition-transform duration-300 ease-out"}`}
         style={{ transform: `translateX(${translateX}%)`, width: `${pages.length * 100}%` }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="w-full h-full flex-shrink-0"><GamesPage /></div>
-        <div className="w-full h-full flex-shrink-0"><HomePage onNavigate={handleNavigate} /></div>
-        <div className="w-full h-full flex-shrink-0"><WorkoutPage /></div>
-        <div className="w-full h-full flex-shrink-0"><FoodPage /></div>
+        <div className="w-full h-full flex-shrink-0 overflow-y-auto"><GamesPage /></div>
+        <div className="w-full h-full flex-shrink-0 overflow-y-auto"><HomePage onNavigate={handleNavigate} /></div>
+        <div className="w-full h-full flex-shrink-0 overflow-y-auto"><WorkoutPage /></div>
+        <div className="w-full h-full flex-shrink-0 overflow-y-auto"><FoodPage /></div>
       </div>
 
       {/* Bottom Navigation */}
