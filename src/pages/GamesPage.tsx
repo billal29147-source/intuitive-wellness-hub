@@ -1,4 +1,4 @@
-import { Gamepad2, Trophy, Users, Star, Medal, ChevronRight } from "lucide-react";
+import { Gamepad2, Trophy, Users, Star, Medal, Award, Target, Calendar } from "lucide-react";
 
 const leaderboard = [
   { name: "You", steps: 8432, rank: 2, avatar: "🏃" },
@@ -11,6 +11,15 @@ const challenges = [
   { name: "Weekend Warrior", desc: "10K steps for 2 days", reward: "50 pts", joined: true, color: "text-health-steps" },
   { name: "Early Bird", desc: "Workout before 8 AM", reward: "30 pts", joined: false, color: "text-health-calories" },
   { name: "Hydration Hero", desc: "8 glasses daily for a week", reward: "40 pts", joined: true, color: "text-health-hydration" },
+];
+
+const achievements = [
+  { name: "First 10K Steps", desc: "Walk 10,000 steps in a day", unlocked: true, icon: "🏅" },
+  { name: "Week Streak", desc: "7-day activity streak", unlocked: true, icon: "🔥" },
+  { name: "Early Riser", desc: "5 workouts before 7 AM", unlocked: true, icon: "🌅" },
+  { name: "Marathon Ready", desc: "Run 42 km total", unlocked: false, icon: "🏃", progress: 68 },
+  { name: "Iron Will", desc: "30-day streak", unlocked: false, icon: "💎", progress: 47 },
+  { name: "Social Butterfly", desc: "Win 10 challenges", unlocked: false, icon: "🦋", progress: 30 },
 ];
 
 const GamesPage = () => {
@@ -37,6 +46,32 @@ const GamesPage = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Score Wrapped - Daily/Monthly/Yearly */}
+      <div className="glass-card rounded-3xl p-4 mb-5">
+        <div className="flex items-center gap-2 mb-3">
+          <Calendar className="w-4 h-4 text-health-progress" />
+          <p className="text-xs text-muted-foreground uppercase tracking-wider">Score Wrapped</p>
+        </div>
+        <div className="grid grid-cols-3 gap-2 mb-3">
+          <div className="bg-muted/50 rounded-xl p-3 text-center">
+            <p className="text-[10px] text-muted-foreground">Daily Avg</p>
+            <p className="text-xl font-bold text-health-progress">82</p>
+            <p className="text-[10px] text-health-steps">▲ +3</p>
+          </div>
+          <div className="bg-muted/50 rounded-xl p-3 text-center">
+            <p className="text-[10px] text-muted-foreground">Monthly Avg</p>
+            <p className="text-xl font-bold text-health-steps">78</p>
+            <p className="text-[10px] text-health-steps">▲ +5</p>
+          </div>
+          <div className="bg-muted/50 rounded-xl p-3 text-center">
+            <p className="text-[10px] text-muted-foreground">Yearly Avg</p>
+            <p className="text-xl font-bold text-health-calories">75</p>
+            <p className="text-[10px] text-health-steps">▲ +12</p>
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground text-center">Your health score has improved 12% this year! 🎉</p>
       </div>
 
       {/* Leaderboard */}
@@ -66,8 +101,33 @@ const GamesPage = () => {
         ))}
       </div>
 
+      {/* Achievements & Milestones */}
+      <p className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-1.5">
+        <Award className="w-4 h-4" /> Achievements & Milestones
+      </p>
+      <div className="grid grid-cols-3 gap-2 mb-5">
+        {achievements.map((a) => (
+          <div key={a.name} className={`glass-card rounded-2xl p-3 text-center ${!a.unlocked ? "opacity-60" : ""}`}>
+            <span className="text-2xl">{a.icon}</span>
+            <p className="text-[10px] font-medium mt-1 leading-tight">{a.name}</p>
+            {a.unlocked ? (
+              <p className="text-[10px] text-health-progress mt-0.5">✓ Unlocked</p>
+            ) : (
+              <div className="mt-1">
+                <div className="w-full h-1 bg-muted rounded-full">
+                  <div className="h-full bg-health-calories rounded-full" style={{ width: `${a.progress}%` }} />
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{a.progress}%</p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
       {/* Active Challenges */}
-      <p className="text-sm font-semibold text-muted-foreground mb-3">Challenges</p>
+      <p className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-1.5">
+        <Target className="w-4 h-4" /> Challenges
+      </p>
       <div className="space-y-3">
         {challenges.map((c) => (
           <div key={c.name} className="glass-card rounded-2xl p-4 flex items-center justify-between">
