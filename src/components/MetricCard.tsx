@@ -1,5 +1,5 @@
-import { LucideIcon, Info, ChevronDown, ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { LucideIcon, Info, ChevronDown, ChevronUp, Pencil, Check } from "lucide-react";
+import { useState, useRef } from "react";
 
 interface MetricCardProps {
   icon: LucideIcon;
@@ -14,20 +14,60 @@ interface MetricCardProps {
     tips: string[];
     progress?: number;
   };
+  editable?: {
+    fields: { key: string; label: string; value: number; unit: string; min?: number; max?: number; step?: number }[];
+    onSave: (key: string, value: number) => void;
+  };
+  statusLabel?: string;
+  statusColor?: string;
 }
 
-const MetricCard = ({ icon: Icon, label, value, subtitle, colorClass, glowClass, onInfo, goalTip }: MetricCardProps) => {
+const MetricCard = ({ icon: Icon, label, value, subtitle, colorClass, glowClass, onInfo, goalTip, editable, statusLabel, statusColor }: MetricCardProps) => {
   const [expanded, setExpanded] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editValues, setEditValues] = useState<Record<string, number>>({});
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const startEditing = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (editable) {
+      const vals: Record<string, number> = {};
+      editable.fields.forEach(f => { vals[f.key] = f.value; });
+      setEditValues(vals);
+      setEditing(true);
+      setExpanded(true);
+    }
+  };
+
+  const saveEdits = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (editable) {
+      Object.entries(editValues).forEach(([key, val]) => {
+        editable.onSave(key, val);
+      });
+      setEditing(false);
+    }
+  };
 
   return (
     <div
       className={`glass-card rounded-2xl p-4 ${glowClass} animate-slide-up cursor-pointer transition-all duration-300 ${expanded ? "col-span-2" : ""}`}
-      onClick={() => goalTip && setExpanded(!expanded)}
+      onClick={() => !editing && goalTip && setExpanded(!expanded)}
     >
       <div className="flex items-center gap-2 mb-2">
         <Icon className={`w-4 h-4 ${colorClass}`} />
         <span className="text-xs text-muted-foreground uppercase tracking-wider flex-1">{label}</span>
-        {goalTip && (
+        {editable && !editing && (
+          <button onClick={startEditing} className="opacity-50 hover:opacity-100 transition-opacity">
+            <Pencil className="w-3 h-3 text-muted-foreground" />
+          </button>
+        )}
+        {editing && (
+          <button onClick={saveEdits} className="opacity-80 hover:opacity-100 transition-opacity">
+            <Check className="w-3.5 h-3.5 text-health-progress" />
+          </button>
+        )}
+        {goalTip && !editing && (
           expanded ? <ChevronUp className="w-3 h-3 text-muted-foreground" /> : <ChevronDown className="w-3 h-3 text-muted-foreground" />
         )}
         {onInfo && (
@@ -38,8 +78,34 @@ const MetricCard = ({ icon: Icon, label, value, subtitle, colorClass, glowClass,
       </div>
       <p className={`text-2xl font-bold ${colorClass}`}>{value}</p>
       {subtitle && <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>}
+      {statusLabel && (
+        <p className={`text-xs font-semibold mt-1 ${statusColor || colorClass}`}>{statusLabel}</p>
+      )}
 
-      {expanded && goalTip && (
+      {/* Edit Mode */}
+      {editing && editable && (
+        <div className="mt-3 pt-3 border-t border-border/50 space-y-3" onClick={(e) => e.stopPropagation()}>
+          {editable.fields.map((field) => (
+            <div key={field.key} className="flex items-center gap-2">
+              <label className="text-[11px] text-muted-foreground w-16 flex-shrink-0">{field.label}</label>
+              <input
+                ref={inputRef}
+                type="number"
+                value={editValues[field.key] ?? field.value}
+                min={field.min}
+                max={field.max}
+                step={field.step || 1}
+                onChange={(e) => setEditValues(prev => ({ ...prev, [field.key]: parseFloat(e.target.value) || 0 }))}
+                className="flex-1 h-8 rounded-lg border border-border bg-muted/50 px-2 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-primary"
+              />
+              <span className="text-[10px] text-muted-foreground w-10">{field.unit}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Expanded Tips */}
+      {expanded && goalTip && !editing && (
         <div className="mt-3 pt-3 border-t border-border/50 space-y-2">
           {goalTip.progress !== undefined && (
             <div className="w-full bg-muted/50 rounded-full h-2 mb-2">

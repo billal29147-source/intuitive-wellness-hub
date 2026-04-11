@@ -1,11 +1,5 @@
 import { Gamepad2, Trophy, Users, Star, Medal, Award, Target, Calendar } from "lucide-react";
-
-const leaderboard = [
-  { name: "You", steps: 8432, rank: 2, avatar: "🏃" },
-  { name: "Sarah K.", steps: 9120, rank: 1, avatar: "👑" },
-  { name: "Mike R.", steps: 7845, rank: 3, avatar: "💪" },
-  { name: "Emma L.", steps: 6230, rank: 4, avatar: "🌟" },
-];
+import { useHealthData } from "@/contexts/HealthDataContext";
 
 const challenges = [
   { name: "Weekend Warrior", desc: "10K steps for 2 days", reward: "50 pts", joined: true, color: "text-health-steps" },
@@ -23,6 +17,15 @@ const achievements = [
 ];
 
 const GamesPage = () => {
+  const { metrics } = useHealthData();
+
+  const leaderboard = [
+    { name: "You", steps: metrics.steps, rank: 2, avatar: "🏃" },
+    { name: "Sarah K.", steps: 9120, rank: 1, avatar: "👑" },
+    { name: "Mike R.", steps: 7845, rank: 3, avatar: "💪" },
+    { name: "Emma L.", steps: 6230, rank: 4, avatar: "🌟" },
+  ].sort((a, b) => b.steps - a.steps).map((u, i) => ({ ...u, rank: i + 1 }));
+
   return (
     <div className="flex flex-col h-full px-5 py-6 overflow-y-auto">
       <div className="mb-6">
@@ -35,20 +38,18 @@ const GamesPage = () => {
       {/* Your Stats */}
       <div className="glass-card rounded-3xl p-5 mb-5 health-glow-progress">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-health-progress/20 flex items-center justify-center text-2xl">
-            🏆
-          </div>
+          <div className="w-16 h-16 rounded-2xl bg-health-progress/20 flex items-center justify-center text-2xl">🏆</div>
           <div className="flex-1">
-            <p className="font-bold text-lg">Level 14</p>
-            <p className="text-xs text-muted-foreground">1,250 / 1,500 XP to next level</p>
+            <p className="font-bold text-lg">Level {Math.floor(metrics.streak / 2) + 7}</p>
+            <p className="text-xs text-muted-foreground">{metrics.streak * 90} / {(Math.floor(metrics.streak / 2) + 8) * 150} XP to next level</p>
             <div className="w-full h-2 bg-muted rounded-full mt-2">
-              <div className="h-full bg-health-progress rounded-full" style={{ width: "83%" }} />
+              <div className="h-full bg-health-progress rounded-full" style={{ width: `${Math.min(100, (metrics.streak * 90) / ((Math.floor(metrics.streak / 2) + 8) * 150) * 100)}%` }} />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Score Wrapped - Daily/Monthly/Yearly */}
+      {/* Score Wrapped */}
       <div className="glass-card rounded-3xl p-4 mb-5">
         <div className="flex items-center gap-2 mb-3">
           <Calendar className="w-4 h-4 text-health-progress" />
@@ -57,51 +58,37 @@ const GamesPage = () => {
         <div className="grid grid-cols-3 gap-2 mb-3">
           <div className="bg-muted/50 rounded-xl p-3 text-center">
             <p className="text-[10px] text-muted-foreground">Daily Avg</p>
-            <p className="text-xl font-bold text-health-progress">82</p>
-            <p className="text-[10px] text-health-steps">▲ +3</p>
+            <p className="text-xl font-bold text-health-progress">{metrics.healthScore}</p>
           </div>
           <div className="bg-muted/50 rounded-xl p-3 text-center">
             <p className="text-[10px] text-muted-foreground">Monthly Avg</p>
-            <p className="text-xl font-bold text-health-steps">78</p>
-            <p className="text-[10px] text-health-steps">▲ +5</p>
+            <p className="text-xl font-bold text-health-steps">{Math.round(metrics.healthScore * 0.95)}</p>
           </div>
           <div className="bg-muted/50 rounded-xl p-3 text-center">
             <p className="text-[10px] text-muted-foreground">Yearly Avg</p>
-            <p className="text-xl font-bold text-health-calories">75</p>
-            <p className="text-[10px] text-health-steps">▲ +12</p>
+            <p className="text-xl font-bold text-health-calories">{Math.round(metrics.healthScore * 0.91)}</p>
           </div>
         </div>
-        <p className="text-xs text-muted-foreground text-center">Your health score has improved 12% this year! 🎉</p>
       </div>
 
       {/* Leaderboard */}
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-sm font-semibold text-muted-foreground flex items-center gap-1.5">
-          <Trophy className="w-4 h-4" /> Weekly Leaderboard
-        </p>
-        <Users className="w-4 h-4 text-muted-foreground" />
-      </div>
+      <p className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-1.5">
+        <Trophy className="w-4 h-4" /> Weekly Leaderboard
+      </p>
       <div className="space-y-2 mb-5">
-        {leaderboard.sort((a, b) => a.rank - b.rank).map((user) => (
-          <div
-            key={user.name}
-            className={`glass-card rounded-2xl p-3 flex items-center gap-3 ${user.name === "You" ? "ring-1 ring-primary/40" : ""}`}
-          >
-            <span className="text-lg w-8 text-center">{user.avatar}</span>
+        {leaderboard.map((user) => (
+          <div key={user.name} className={`glass-card rounded-2xl p-3 flex items-center gap-3 ${user.name === "You" ? "ring-1 ring-primary/40" : ""}`}>
+            <span className="text-lg w-8 text-center">{user.rank === 1 ? "👑" : user.avatar}</span>
             <div className="flex-1">
               <p className="text-sm font-medium">{user.name}</p>
               <p className="text-xs text-muted-foreground">{user.steps.toLocaleString()} steps</p>
             </div>
-            <div className="flex items-center gap-1">
-              {user.rank === 1 && <Star className="w-4 h-4 text-health-calories fill-health-calories" />}
-              {user.rank === 2 && <Medal className="w-4 h-4 text-muted-foreground" />}
-              <span className="text-xs font-bold text-muted-foreground">#{user.rank}</span>
-            </div>
+            <span className="text-xs font-bold text-muted-foreground">#{user.rank}</span>
           </div>
         ))}
       </div>
 
-      {/* Achievements & Milestones */}
+      {/* Achievements */}
       <p className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-1.5">
         <Award className="w-4 h-4" /> Achievements & Milestones
       </p>
@@ -124,7 +111,7 @@ const GamesPage = () => {
         ))}
       </div>
 
-      {/* Active Challenges */}
+      {/* Challenges */}
       <p className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-1.5">
         <Target className="w-4 h-4" /> Challenges
       </p>
