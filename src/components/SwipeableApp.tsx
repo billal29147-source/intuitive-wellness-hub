@@ -85,10 +85,10 @@ const SwipeableApp = () => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="w-full h-full flex-shrink-0 overflow-y-auto"><GamesPage /></div>
-        <div className="w-full h-full flex-shrink-0 overflow-y-auto"><WorkoutPage /></div>
-        <div className="w-full h-full flex-shrink-0 overflow-y-auto"><HomePage onNavigate={handleNavigate} /></div>
-        <div className="w-full h-full flex-shrink-0 overflow-y-auto"><FoodPage /></div>
+        <div className="h-full flex-shrink-0 overflow-y-auto" style={{ width: `${100 / pages.length}%` }}><GamesPage /></div>
+        <div className="h-full flex-shrink-0 overflow-y-auto" style={{ width: `${100 / pages.length}%` }}><WorkoutPage /></div>
+        <div className="h-full flex-shrink-0 overflow-y-auto" style={{ width: `${100 / pages.length}%` }}><HomePage onNavigate={handleNavigate} /></div>
+        <div className="h-full flex-shrink-0 overflow-y-auto" style={{ width: `${100 / pages.length}%` }}><FoodPage /></div>
       </div>
 
       {/* Bottom Navigation */}
