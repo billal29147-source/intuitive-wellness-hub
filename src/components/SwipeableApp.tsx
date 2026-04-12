@@ -73,7 +73,8 @@ const SwipeableApp = () => {
     setDragOffset(0);
   };
 
-  const translateX = -currentPage * 100 + (dragOffset / window.innerWidth) * 100;
+  const pageWidth = 100 / pages.length;
+  const translateX = -currentPage * pageWidth + (dragOffset / window.innerWidth) * pageWidth;
 
   return (
     <div className="relative h-[100dvh] w-full max-w-lg mx-auto overflow-hidden bg-background">
