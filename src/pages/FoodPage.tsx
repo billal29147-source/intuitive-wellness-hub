@@ -1,6 +1,6 @@
 import { UtensilsCrossed, Droplets, Apple, Beef, Wheat, Plus, Pill, Lightbulb, Pencil, Check, Flame, Activity } from "lucide-react";
 import HealthRing from "@/components/HealthRing";
-import ExpandableTipCard from "@/components/ExpandableTipCard";
+import TipReveal from "@/components/TipReveal";
 import { useHealthData } from "@/contexts/HealthDataContext";
 import { useState } from "react";
 import { defaultMeals, getSmartMealRecommendations, getMealHealthFit, Meal } from "@/lib/mealData";
