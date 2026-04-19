@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import { Home, Dumbbell, UtensilsCrossed, Gamepad2, Settings } from "lucide-react";
+import { Home, Dumbbell, UtensilsCrossed, Trophy, Settings } from "lucide-react";
 import HomePage from "@/pages/HomePage";
 import WorkoutPage from "@/pages/WorkoutPage";
 import FoodPage from "@/pages/FoodPage";
@@ -7,7 +7,7 @@ import GamesPage from "@/pages/GamesPage";
 import SettingsMenu from "@/components/SettingsMenu";
 
 const pages = [
-  { id: "games", label: "Compete", icon: Gamepad2 },
+  { id: "games", label: "Compete", icon: Trophy },
   { id: "workout", label: "Workout", icon: Dumbbell },
   { id: "home", label: "Home", icon: Home },
   { id: "food", label: "Food", icon: UtensilsCrossed },
