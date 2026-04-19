@@ -40,134 +40,141 @@ const FoodPage = () => {
         </h1>
       </div>
 
-      {/* Macros Overview - Static rings + edit */}
-      <div className="glass-card rounded-3xl p-5 mb-5">
-        <div className="flex items-center justify-between mb-3">
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">Today's Macros</p>
-            <p className="text-lg font-bold mt-0.5">{metrics.totalCaloriesFood} <span className="text-xs font-normal text-muted-foreground">/ {metrics.totalCaloriesFoodGoal} cal</span></p>
+      {/* Macros Overview - Static rings + edit, tap for tips */}
+      <TipReveal
+        colorClass="text-health-hydration"
+        summary={`You've eaten ${metrics.totalCaloriesFood} of ${metrics.totalCaloriesFoodGoal} cal today.`}
+        tips={[
+          metrics.protein < metrics.proteinGoal * 0.5
+            ? `🥩 Low on protein (${metrics.protein}g) — add chicken, fish, or Greek yogurt.`
+            : `✓ Protein on track at ${metrics.protein}g.`,
+          metrics.carbs > metrics.carbsGoal * 0.85
+            ? `🍞 Near your carb limit — choose low-carb options for remaining meals.`
+            : `Aim for complex carbs (oats, quinoa) for sustained energy.`,
+          metrics.fats < metrics.fatsGoal * 0.4
+            ? `🥑 Add healthy fats — avocado, nuts, olive oil for hormone support.`
+            : `✓ Healthy fats are in good range.`,
+          `Spread protein across meals — your body uses ~30g per sitting most efficiently.`,
+        ]}
+      >
+        <div className="glass-card rounded-3xl p-5">
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Today's Macros</p>
+              <p className="text-lg font-bold mt-0.5">{metrics.totalCaloriesFood} <span className="text-xs font-normal text-muted-foreground">/ {metrics.totalCaloriesFoodGoal} cal</span></p>
+            </div>
+            <button onClick={(e) => { e.stopPropagation(); setEditingMacros(!editingMacros); }} className="opacity-60 hover:opacity-100">
+              {editingMacros ? <Check className="w-4 h-4 text-health-progress" /> : <Pencil className="w-4 h-4 text-muted-foreground" />}
+            </button>
           </div>
-          <button onClick={() => setEditingMacros(!editingMacros)} className="opacity-60 hover:opacity-100">
-            {editingMacros ? <Check className="w-4 h-4 text-health-progress" /> : <Pencil className="w-4 h-4 text-muted-foreground" />}
-          </button>
-        </div>
 
-        {editingMacros ? (
-          <div className="space-y-3">
-            {[
-              { label: "Protein", key: "protein" as const, goalKey: "proteinGoal" as const, unit: "g" },
-              { label: "Carbs", key: "carbs" as const, goalKey: "carbsGoal" as const, unit: "g" },
-              { label: "Fats", key: "fats" as const, goalKey: "fatsGoal" as const, unit: "g" },
-              { label: "Total Cal", key: "totalCaloriesFood" as const, goalKey: "totalCaloriesFoodGoal" as const, unit: "cal" },
-            ].map((item) => (
-              <div key={item.key} className="flex items-center gap-2">
-                <span className="text-[11px] text-muted-foreground w-16">{item.label}</span>
-                <input type="number" value={metrics[item.key]} onChange={(e) => updateMetric(item.key, parseFloat(e.target.value) || 0)}
-                  className="flex-1 h-8 rounded-lg border border-border bg-muted/50 px-2 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-primary" />
-                <span className="text-[10px] text-muted-foreground">/</span>
-                <input type="number" value={metrics[item.goalKey]} onChange={(e) => updateMetric(item.goalKey, parseFloat(e.target.value) || 0)}
-                  className="w-16 h-8 rounded-lg border border-border bg-muted/50 px-2 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-primary" />
-                <span className="text-[10px] text-muted-foreground w-6">{item.unit}</span>
+          {editingMacros ? (
+            <div className="space-y-3" onClick={(e) => e.stopPropagation()}>
+              {[
+                { label: "Protein", key: "protein" as const, goalKey: "proteinGoal" as const, unit: "g" },
+                { label: "Carbs", key: "carbs" as const, goalKey: "carbsGoal" as const, unit: "g" },
+                { label: "Fats", key: "fats" as const, goalKey: "fatsGoal" as const, unit: "g" },
+                { label: "Total Cal", key: "totalCaloriesFood" as const, goalKey: "totalCaloriesFoodGoal" as const, unit: "cal" },
+              ].map((item) => (
+                <div key={item.key} className="flex items-center gap-2">
+                  <span className="text-[11px] text-muted-foreground w-16">{item.label}</span>
+                  <input type="number" value={metrics[item.key]} onChange={(e) => updateMetric(item.key, parseFloat(e.target.value) || 0)}
+                    className="flex-1 h-8 rounded-lg border border-border bg-muted/50 px-2 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-primary" />
+                  <span className="text-[10px] text-muted-foreground">/</span>
+                  <input type="number" value={metrics[item.goalKey]} onChange={(e) => updateMetric(item.goalKey, parseFloat(e.target.value) || 0)}
+                    className="w-16 h-8 rounded-lg border border-border bg-muted/50 px-2 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-primary" />
+                  <span className="text-[10px] text-muted-foreground w-6">{item.unit}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center justify-around py-2">
+                <div className="flex flex-col items-center">
+                  <HealthRing progress={proteinProgress} size={56} strokeWidth={5} color="hsl(var(--health-heart))">
+                    <Beef className="w-3.5 h-3.5 text-health-heart" />
+                  </HealthRing>
+                  <p className="text-[10px] text-muted-foreground mt-1">Protein</p>
+                  <p className="text-[10px] font-semibold">{metrics.protein}/{metrics.proteinGoal}g</p>
+                </div>
+                <div className="flex flex-col items-center">
+                  <HealthRing progress={carbsProgress} size={56} strokeWidth={5} color="hsl(var(--health-calories))">
+                    <Wheat className="w-3.5 h-3.5 text-health-calories" />
+                  </HealthRing>
+                  <p className="text-[10px] text-muted-foreground mt-1">Carbs</p>
+                  <p className="text-[10px] font-semibold">{metrics.carbs}/{metrics.carbsGoal}g</p>
+                </div>
+                <div className="flex flex-col items-center">
+                  <HealthRing progress={fatsProgress} size={56} strokeWidth={5} color="hsl(var(--health-steps))">
+                    <Apple className="w-3.5 h-3.5 text-health-steps" />
+                  </HealthRing>
+                  <p className="text-[10px] text-muted-foreground mt-1">Fats</p>
+                  <p className="text-[10px] font-semibold">{metrics.fats}/{metrics.fatsGoal}g</p>
+                </div>
               </div>
+
+              <div className="mt-4 pt-3 border-t border-border/50">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">7-Day Calorie Trend</p>
+                  <p className="text-[10px] text-muted-foreground">Goal {metrics.totalCaloriesFoodGoal}</p>
+                </div>
+                <div className="flex items-end gap-1.5 h-16">
+                  {trend.map((v, i) => {
+                    const isToday = i === trend.length - 1;
+                    const isOver = v > 1;
+                    return (
+                      <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                        <div
+                          className={`w-full rounded-t-md transition-all ${
+                            isToday ? "bg-health-hydration" : isOver ? "bg-health-calories/70" : "bg-muted-foreground/30"
+                          }`}
+                          style={{ height: `${Math.min(100, v * 80)}%` }}
+                        />
+                        <span className="text-[8px] text-muted-foreground">{["M","T","W","T","F","S","S"][i]}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </TipReveal>
+      <div className="mb-5" />
+
+      {/* Water Tracker - tap for tips */}
+      <TipReveal colorClass="text-health-hydration" summary={waterTip.summary} tips={waterTip.tips}>
+        <div className="glass-card rounded-3xl p-5">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Droplets className="w-5 h-5 text-health-hydration" />
+              <div>
+                <p className="text-sm font-semibold">Water</p>
+                <p className="text-[11px] text-muted-foreground">{metrics.water} / {metrics.waterGoal} glasses</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+              <button onClick={() => updateMetric("water", Math.max(0, metrics.water - 1))} className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-sm font-bold">−</button>
+              <button onClick={() => updateMetric("water", Math.min(metrics.waterGoal, metrics.water + 1))} className="w-7 h-7 rounded-full bg-health-hydration/20 flex items-center justify-center text-sm font-bold text-health-hydration">+</button>
+            </div>
+          </div>
+          <div className="flex gap-1 mb-2">
+            {Array.from({ length: waterGoal }).map((_, i) => (
+              <div key={i} className={`flex-1 h-3 rounded-full transition-all ${i < waterDone ? "bg-health-hydration" : "bg-muted"}`} />
             ))}
           </div>
-        ) : (
-          <>
-            <div className="flex items-center justify-around py-2">
-              <div className="flex flex-col items-center">
-                <HealthRing progress={proteinProgress} size={56} strokeWidth={5} color="hsl(var(--health-heart))">
-                  <Beef className="w-3.5 h-3.5 text-health-heart" />
-                </HealthRing>
-                <p className="text-[10px] text-muted-foreground mt-1">Protein</p>
-                <p className="text-[10px] font-semibold">{metrics.protein}/{metrics.proteinGoal}g</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <HealthRing progress={carbsProgress} size={56} strokeWidth={5} color="hsl(var(--health-calories))">
-                  <Wheat className="w-3.5 h-3.5 text-health-calories" />
-                </HealthRing>
-                <p className="text-[10px] text-muted-foreground mt-1">Carbs</p>
-                <p className="text-[10px] font-semibold">{metrics.carbs}/{metrics.carbsGoal}g</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <HealthRing progress={fatsProgress} size={56} strokeWidth={5} color="hsl(var(--health-steps))">
-                  <Apple className="w-3.5 h-3.5 text-health-steps" />
-                </HealthRing>
-                <p className="text-[10px] text-muted-foreground mt-1">Fats</p>
-                <p className="text-[10px] font-semibold">{metrics.fats}/{metrics.fatsGoal}g</p>
-              </div>
-            </div>
-
-            {/* 7-day calorie trend bar chart */}
-            <div className="mt-4 pt-3 border-t border-border/50">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">7-Day Calorie Trend</p>
-                <p className="text-[10px] text-muted-foreground">Goal {metrics.totalCaloriesFoodGoal}</p>
-              </div>
-              <div className="flex items-end gap-1.5 h-16">
-                {trend.map((v, i) => {
-                  const isToday = i === trend.length - 1;
-                  const isOver = v > 1;
-                  return (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                      <div
-                        className={`w-full rounded-t-md transition-all ${
-                          isToday ? "bg-health-hydration" : isOver ? "bg-health-calories/70" : "bg-muted-foreground/30"
-                        }`}
-                        style={{ height: `${Math.min(100, v * 80)}%` }}
-                      />
-                      <span className="text-[8px] text-muted-foreground">{["M","T","W","T","F","S","S"][i]}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* Water Tracker - static visual with controls */}
-      <div className="glass-card rounded-3xl p-5 mb-5">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <Droplets className="w-5 h-5 text-health-hydration" />
-            <div>
-              <p className="text-sm font-semibold">Water</p>
-              <p className="text-[11px] text-muted-foreground">{metrics.water} / {metrics.waterGoal} glasses</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button onClick={() => updateMetric("water", Math.max(0, metrics.water - 1))} className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-sm font-bold">−</button>
-            <button onClick={() => updateMetric("water", Math.min(metrics.waterGoal, metrics.water + 1))} className="w-7 h-7 rounded-full bg-health-hydration/20 flex items-center justify-center text-sm font-bold text-health-hydration">+</button>
-          </div>
+          <p className="text-[11px] text-muted-foreground">{waterTip.summary}</p>
         </div>
-        <div className="flex gap-1 mb-2">
-          {Array.from({ length: waterGoal }).map((_, i) => (
-            <div key={i} className={`flex-1 h-3 rounded-full transition-all ${i < waterDone ? "bg-health-hydration" : "bg-muted"}`} />
-          ))}
-        </div>
-        <p className="text-[11px] text-muted-foreground">{waterTip.summary}</p>
-      </div>
+      </TipReveal>
+      <div className="mb-5" />
 
-      {/* Single expandable: full hydration tips */}
-      <div className="mb-5">
-        <ExpandableTipCard
-          icon={Lightbulb}
-          title="Hydration Coach"
-          subtitle="Tap for personalized water tips"
-          colorClass="text-health-hydration"
-          summary={waterTip.summary}
-          tips={waterTip.tips}
-          progress={waterTip.progress}
-        />
-      </div>
-
-      {/* Smart Meal Recommendations - horizontal scroll cards (not dropdowns) */}
+      {/* Smart Meal Recommendations - horizontal scroll, scrollbar hidden */}
       {recommendations.length > 0 && (
         <>
           <p className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-1.5">
             <Lightbulb className="w-4 h-4 text-health-progress" /> Smart Picks For Your Health
           </p>
-          <div className="flex gap-3 overflow-x-auto pb-2 mb-5 -mx-5 px-5 snap-x">
+          <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2 mb-5 -mx-5 px-5 snap-x">
             {recommendations.map((rec, i) => (
               <div key={i} className="glass-card rounded-2xl p-4 min-w-[200px] snap-start flex-shrink-0">
                 <div className="flex items-center gap-2 mb-2">
