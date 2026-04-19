@@ -1,6 +1,6 @@
 import { Trophy, Award, Target, Calendar, TrendingUp, Flame } from "lucide-react";
 import { useHealthData } from "@/contexts/HealthDataContext";
-import ExpandableTipCard from "@/components/ExpandableTipCard";
+import TipReveal from "@/components/TipReveal";
 
 const challenges = [
   { name: "Weekend Warrior", desc: "10K steps for 2 days", reward: "50 pts", joined: true, color: "text-health-steps", progress: 65 },
