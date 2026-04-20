@@ -231,7 +231,7 @@ const FoodPage = () => {
       </div>
       <div className="space-y-2">
         {meals.map((meal) => {
-          const fit = getMealHealthFit(meal, metrics);
+          const fit = getMealHealthFit(meal, metrics, user);
           const isOpen = expandedMeal === meal.name;
           return (
             <div
