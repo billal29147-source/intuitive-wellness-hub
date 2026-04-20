@@ -2,8 +2,9 @@ import { UtensilsCrossed, Droplets, Apple, Beef, Wheat, Plus, Pill, Lightbulb, P
 import HealthRing from "@/components/HealthRing";
 import TipReveal from "@/components/TipReveal";
 import { useHealthData } from "@/contexts/HealthDataContext";
-import { useState } from "react";
-import { defaultMeals, getSmartMealRecommendations, getMealHealthFit, Meal } from "@/lib/mealData";
+import { useAuth } from "@/contexts/AuthContext";
+import { useState, useMemo } from "react";
+import { getDailyMeals, getSmartMealRecommendations, getMealHealthFit, Meal } from "@/lib/mealData";
 import { getWaterTip } from "@/lib/healthTips";
 
 const medicines = [
