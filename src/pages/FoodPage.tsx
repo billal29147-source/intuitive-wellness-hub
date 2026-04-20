@@ -2,8 +2,9 @@ import { UtensilsCrossed, Droplets, Apple, Beef, Wheat, Plus, Pill, Lightbulb, P
 import HealthRing from "@/components/HealthRing";
 import TipReveal from "@/components/TipReveal";
 import { useHealthData } from "@/contexts/HealthDataContext";
-import { useState } from "react";
-import { defaultMeals, getSmartMealRecommendations, getMealHealthFit, Meal } from "@/lib/mealData";
+import { useAuth } from "@/contexts/AuthContext";
+import { useState, useMemo } from "react";
+import { getDailyMeals, getSmartMealRecommendations, getMealHealthFit, Meal } from "@/lib/mealData";
 import { getWaterTip } from "@/lib/healthTips";
 
 const medicines = [
@@ -14,14 +15,15 @@ const medicines = [
 
 const FoodPage = () => {
   const { metrics, updateMetric } = useHealthData();
+  const { user } = useAuth();
   const [editingMacros, setEditingMacros] = useState(false);
-  const [meals] = useState<Meal[]>(defaultMeals);
+  const meals = useMemo<Meal[]>(() => getDailyMeals(user), [user]);
   const [expandedMeal, setExpandedMeal] = useState<string | null>(null);
 
   const waterDone = metrics.water;
   const waterGoal = metrics.waterGoal;
-  const waterTip = getWaterTip(metrics);
-  const recommendations = getSmartMealRecommendations(metrics);
+  const waterTip = getWaterTip(metrics, user);
+  const recommendations = getSmartMealRecommendations(metrics, user);
 
   const proteinProgress = Math.min(100, Math.round((metrics.protein / metrics.proteinGoal) * 100));
   const carbsProgress = Math.min(100, Math.round((metrics.carbs / metrics.carbsGoal) * 100));
@@ -229,7 +231,7 @@ const FoodPage = () => {
       </div>
       <div className="space-y-2">
         {meals.map((meal) => {
-          const fit = getMealHealthFit(meal, metrics);
+          const fit = getMealHealthFit(meal, metrics, user);
           const isOpen = expandedMeal === meal.name;
           return (
             <div

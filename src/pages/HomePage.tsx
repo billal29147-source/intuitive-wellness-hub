@@ -3,6 +3,8 @@ import MetricCard from "@/components/MetricCard";
 import HealthRing from "@/components/HealthRing";
 import { useState } from "react";
 import { useHealthData } from "@/contexts/HealthDataContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { calcBMI, bmiCategory } from "@/lib/profileMath";
 import { getStepsTip, getHeartTip, getSleepTip, getCaloriesTip, getWaterTip, getStreakTip, getSpo2Tip, getRespTip, getDistanceTip, getBodyCompTip, getHealthScoreTip } from "@/lib/healthTips";
 
 interface HomePageProps {
@@ -31,7 +33,16 @@ const explanations: Record<string, string> = {
 const HomePage = ({ onNavigate }: HomePageProps) => {
   const [showExplanation, setShowExplanation] = useState<string | null>(null);
   const { metrics, updateMetric, getStatusColor, getStatusLabel } = useHealthData();
+  const { user } = useAuth();
   const scoreInfo = getHealthScoreTip(metrics);
+  const bmi = user ? calcBMI(user) : null;
+  const bmiCat = bmi !== null ? bmiCategory(bmi) : null;
+  const greeting = (() => {
+    const h = new Date().getHours();
+    if (h < 12) return "Good Morning";
+    if (h < 18) return "Good Afternoon";
+    return "Good Evening";
+  })();
 
   const moveProgress = Math.round((metrics.activeCalories / metrics.caloriesGoal) * 100);
   const dailyProgress = Math.round((moveProgress + Math.min(100, Math.round((metrics.steps / metrics.stepsGoal) * 100))) / 2);
@@ -41,8 +52,11 @@ const HomePage = ({ onNavigate }: HomePageProps) => {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <p className="text-sm text-muted-foreground">Good Morning, Alex</p>
+          <p className="text-sm text-muted-foreground">{greeting}, {user?.name || "Friend"}</p>
           <h1 className="text-2xl font-bold">Health Dashboard</h1>
+          {bmi !== null && bmiCat && (
+            <p className={`text-[11px] mt-0.5 ${bmiCat.color}`}>BMI {bmi.toFixed(1)} · {bmiCat.label} · Goal: {user?.goal}</p>
+          )}
         </div>
         <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
           <span className="text-primary text-sm font-bold">⌚</span>
@@ -129,7 +143,7 @@ const HomePage = ({ onNavigate }: HomePageProps) => {
       <div className="grid grid-cols-2 gap-3">
         <MetricCard icon={Footprints} label="Steps" value={metrics.steps.toLocaleString()} subtitle={`Goal: ${metrics.stepsGoal.toLocaleString()}`} colorClass="text-health-steps" glowClass="health-glow-steps"
           onInfo={() => setShowExplanation(showExplanation === "steps" ? null : "steps")}
-          goalTip={getStepsTip(metrics)}
+          goalTip={getStepsTip(metrics, user)}
           editable={{ fields: [
             { key: "steps", label: "Steps", value: metrics.steps, unit: "steps", min: 0, max: 100000 },
             { key: "stepsGoal", label: "Goal", value: metrics.stepsGoal, unit: "steps", min: 1000, max: 100000 },
@@ -137,7 +151,7 @@ const HomePage = ({ onNavigate }: HomePageProps) => {
         />
         <MetricCard icon={Heart} label="Heart" value={`${metrics.heartRate} bpm`} subtitle={getStatusLabel("heartRate")} colorClass={getStatusColor("heartRate")} glowClass="health-glow-heart"
           onInfo={() => setShowExplanation(showExplanation === "heart" ? null : "heart")}
-          goalTip={getHeartTip(metrics)}
+          goalTip={getHeartTip(metrics, user)}
           statusLabel={getStatusLabel("heartRate")} statusColor={getStatusColor("heartRate")}
           editable={{ fields: [
             { key: "heartRate", label: "BPM", value: metrics.heartRate, unit: "bpm", min: 20, max: 250 },
@@ -145,7 +159,7 @@ const HomePage = ({ onNavigate }: HomePageProps) => {
         />
         <MetricCard icon={Moon} label="Sleep" value={`${metrics.sleepHours}h ${metrics.sleepMinutes}m`} subtitle={`Deep: ${metrics.deepSleepHours}h ${metrics.deepSleepMinutes}m`} colorClass="text-health-sleep" glowClass="health-glow-sleep"
           onInfo={() => setShowExplanation(showExplanation === "sleep" ? null : "sleep")}
-          goalTip={getSleepTip(metrics)}
+          goalTip={getSleepTip(metrics, user)}
           editable={{ fields: [
             { key: "sleepHours", label: "Hours", value: metrics.sleepHours, unit: "hrs", min: 0, max: 24 },
             { key: "sleepMinutes", label: "Minutes", value: metrics.sleepMinutes, unit: "min", min: 0, max: 59 },
@@ -155,7 +169,7 @@ const HomePage = ({ onNavigate }: HomePageProps) => {
         />
         <MetricCard icon={Flame} label="Calories" value={metrics.calories.toLocaleString()} subtitle={`Active: ${metrics.activeCalories}`} colorClass="text-health-calories" glowClass="health-glow-calories"
           onInfo={() => setShowExplanation(showExplanation === "calories" ? null : "calories")}
-          goalTip={getCaloriesTip(metrics)}
+          goalTip={getCaloriesTip(metrics, user)}
           editable={{ fields: [
             { key: "calories", label: "Total", value: metrics.calories, unit: "cal", min: 0 },
             { key: "activeCalories", label: "Active", value: metrics.activeCalories, unit: "cal", min: 0 },
@@ -163,21 +177,21 @@ const HomePage = ({ onNavigate }: HomePageProps) => {
           ], onSave: (k, v) => updateMetric(k as any, v) }}
         />
         <MetricCard icon={Droplets} label="Water" value={`${metrics.water} / ${metrics.waterGoal}`} subtitle="Glasses" colorClass="text-health-hydration" glowClass="health-glow-steps"
-          goalTip={getWaterTip(metrics)}
+          goalTip={getWaterTip(metrics, user)}
           editable={{ fields: [
             { key: "water", label: "Glasses", value: metrics.water, unit: "glasses", min: 0, max: 20 },
             { key: "waterGoal", label: "Goal", value: metrics.waterGoal, unit: "glasses", min: 1, max: 20 },
           ], onSave: (k, v) => updateMetric(k as any, v) }}
         />
         <MetricCard icon={Trophy} label="Streak" value={`${metrics.streak} days`} subtitle={metrics.streak >= 14 ? "Personal best!" : "Keep going!"} colorClass="text-health-progress" glowClass="health-glow-progress"
-          goalTip={getStreakTip(metrics)}
+          goalTip={getStreakTip(metrics, user)}
           editable={{ fields: [
             { key: "streak", label: "Days", value: metrics.streak, unit: "days", min: 0 },
           ], onSave: (k, v) => updateMetric(k as any, v) }}
         />
         <MetricCard icon={Activity} label="SpO2" value={`${metrics.spo2}%`} subtitle="Blood Oxygen" colorClass={getStatusColor("spo2")} glowClass="health-glow-heart"
           onInfo={() => setShowExplanation(showExplanation === "spo2" ? null : "spo2")}
-          goalTip={getSpo2Tip(metrics)}
+          goalTip={getSpo2Tip(metrics, user)}
           statusLabel={getStatusLabel("spo2")} statusColor={getStatusColor("spo2")}
           editable={{ fields: [
             { key: "spo2", label: "SpO2", value: metrics.spo2, unit: "%", min: 50, max: 100 },
@@ -185,7 +199,7 @@ const HomePage = ({ onNavigate }: HomePageProps) => {
         />
         <MetricCard icon={Wind} label="Resp Rate" value={`${metrics.respRate} brpm`} subtitle={getStatusLabel("respRate")} colorClass={getStatusColor("respRate")} glowClass="health-glow-sleep"
           onInfo={() => setShowExplanation(showExplanation === "respiratory" ? null : "respiratory")}
-          goalTip={getRespTip(metrics)}
+          goalTip={getRespTip(metrics, user)}
           statusLabel={getStatusLabel("respRate")} statusColor={getStatusColor("respRate")}
           editable={{ fields: [
             { key: "respRate", label: "Rate", value: metrics.respRate, unit: "brpm", min: 4, max: 40 },
@@ -193,7 +207,7 @@ const HomePage = ({ onNavigate }: HomePageProps) => {
         />
         <MetricCard icon={MapPin} label="Distance" value={`${metrics.distance} km`} subtitle="Today" colorClass="text-health-steps" glowClass="health-glow-steps"
           onInfo={() => setShowExplanation(showExplanation === "distance" ? null : "distance")}
-          goalTip={getDistanceTip(metrics)}
+          goalTip={getDistanceTip(metrics, user)}
           editable={{ fields: [
             { key: "distance", label: "Distance", value: metrics.distance, unit: "km", min: 0, max: 100, step: 0.1 },
             { key: "distanceGoal", label: "Goal", value: metrics.distanceGoal, unit: "km", min: 1, max: 100, step: 0.1 },
@@ -201,7 +215,7 @@ const HomePage = ({ onNavigate }: HomePageProps) => {
         />
         <MetricCard icon={Brain} label="Body Comp" value={`${metrics.bodyFat}% BF`} subtitle={`Lean: ${metrics.leanMass} kg`} colorClass="text-health-progress" glowClass="health-glow-progress"
           onInfo={() => setShowExplanation(showExplanation === "body" ? null : "body")}
-          goalTip={getBodyCompTip(metrics)}
+          goalTip={getBodyCompTip(metrics, user)}
           editable={{ fields: [
             { key: "bodyFat", label: "Body Fat", value: metrics.bodyFat, unit: "%", min: 3, max: 60 },
             { key: "leanMass", label: "Lean Mass", value: metrics.leanMass, unit: "kg", min: 20, max: 150 },

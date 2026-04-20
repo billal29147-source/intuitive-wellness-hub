@@ -1,103 +1,20 @@
-import { Dumbbell, Timer, Flame, TrendingUp, Play, Zap, Heart, Lightbulb } from "lucide-react";
-import { useState } from "react";
+import { Dumbbell, TrendingUp, Play, Zap, Heart } from "lucide-react";
+import { useState, useMemo } from "react";
 import { useHealthData } from "@/contexts/HealthDataContext";
+import { useAuth } from "@/contexts/AuthContext";
 import ExpandableTipCard from "@/components/ExpandableTipCard";
-
-interface WorkoutDetail {
-  name: string;
-  duration: string;
-  calories: string;
-  caloriesNum: number;
-  intensity: "High" | "Medium" | "Low";
-  color: string;
-  description: string;
-  bestFor: string[];
-  tips: string[];
-}
-
-const workouts: WorkoutDetail[] = [
-  {
-    name: "Morning HIIT",
-    duration: "20 min",
-    calories: "250 cal",
-    caloriesNum: 250,
-    intensity: "High",
-    color: "text-health-heart",
-    description: "High-Intensity Interval Training: short bursts of max effort followed by brief rest. Excellent for fat burn and cardiovascular fitness.",
-    bestFor: ["Burning calories fast", "Improving VO2 max", "Time-crunched mornings"],
-    tips: [
-      "Warm up 3-5 min before starting — prevents injury.",
-      "Use a 30s on / 15s rest pattern for beginners.",
-      "Hydrate before and after — HIIT depletes electrolytes.",
-      "Don't do HIIT 2 days in a row — your body needs recovery.",
-    ],
-  },
-  {
-    name: "Strength Training",
-    duration: "45 min",
-    calories: "380 cal",
-    caloriesNum: 380,
-    intensity: "Medium",
-    color: "text-health-calories",
-    description: "Resistance training using weights or bodyweight to build muscle, increase metabolism, and improve bone density.",
-    bestFor: ["Building lean mass", "Boosting resting metabolism", "Long-term fat loss"],
-    tips: [
-      "Aim for 1.6-2.2g protein per kg of body weight on training days.",
-      "Progressive overload: add a small weight or rep each week.",
-      "Compound lifts (squat, deadlift, bench) give the most return.",
-      "Rest 48 hours between training the same muscle group.",
-    ],
-  },
-  {
-    name: "Evening Yoga",
-    duration: "30 min",
-    calories: "120 cal",
-    caloriesNum: 120,
-    intensity: "Low",
-    color: "text-health-sleep",
-    description: "Gentle stretching, breathwork, and mindfulness to lower cortisol, improve flexibility, and prepare the body for sleep.",
-    bestFor: ["Stress relief", "Better sleep quality", "Recovery days"],
-    tips: [
-      "Best done 1-2 hours before bed for sleep benefits.",
-      "Focus on slow, deep breathing — 4 sec in, 6 sec out.",
-      "Hold each pose for 5+ breaths to deepen the stretch.",
-      "Pair with magnesium supplement for muscle relaxation.",
-    ],
-  },
-  {
-    name: "Cardio Blast",
-    duration: "25 min",
-    calories: "300 cal",
-    caloriesNum: 300,
-    intensity: "High",
-    color: "text-health-steps",
-    description: "Sustained cardiovascular effort like running, cycling, or rowing at 70-85% of max heart rate.",
-    bestFor: ["Heart health", "Endurance building", "Calorie burn"],
-    tips: [
-      "Keep heart rate in zone 2-3 (60-80% max) for fat burning.",
-      "Mix steady-state and intervals weekly for best results.",
-      "Don't skip cool-down — gradually lower heart rate over 5 min.",
-      "Pair with strength training to prevent muscle loss.",
-    ],
-  },
-];
+import { getPersonalizedWorkouts, getRecommendedWorkout } from "@/lib/workoutData";
 
 const WorkoutPage = () => {
   const [mode, setMode] = useState<"active" | "resting">("active");
   const { metrics, getStatusColor, getStatusLabel } = useHealthData();
+  const { user } = useAuth();
 
-  const getRecommendedWorkout = () => {
-    if (metrics.sleepHours < 6) return workouts[2]; // Yoga
-    if (metrics.heartRate > 90) return workouts[2]; // Yoga
-    return workouts[0]; // HIIT
-  };
-
-  const recWorkout = getRecommendedWorkout();
-  const recReason = metrics.sleepHours < 6
-    ? `You only slept ${metrics.sleepHours}h ${metrics.sleepMinutes}m — your body needs lower intensity recovery today.`
-    : metrics.heartRate > 90
-      ? `Your resting heart rate is elevated at ${metrics.heartRate} bpm — focus on calming, low-intensity movement.`
-      : `Your sleep (${metrics.sleepHours}h) and heart rate (${metrics.heartRate} bpm) are great — perfect for high intensity!`;
+  const workouts = useMemo(() => getPersonalizedWorkouts(user), [user]);
+  const { workout: recWorkout, reason: recReason } = useMemo(
+    () => getRecommendedWorkout(metrics, user),
+    [metrics, user]
+  );
 
   const recommendedTip = {
     summary: recReason,
@@ -127,6 +44,11 @@ const WorkoutPage = () => {
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <Dumbbell className="w-6 h-6 text-health-calories" /> Workouts
         </h1>
+        {user && (
+          <p className="text-[11px] text-muted-foreground mt-1">
+            Tailored to your <span className="text-health-progress">{user.workoutStyle}</span> style · Goal: <span className="text-health-progress">{user.goal}</span>
+          </p>
+        )}
       </div>
 
       {/* Mode Toggle */}
@@ -200,7 +122,9 @@ const WorkoutPage = () => {
           </div>
 
           {/* Workout List - Clickable with Details */}
-          <p className="text-sm font-semibold text-muted-foreground mb-3">All Workouts · Tap for details</p>
+          <p className="text-sm font-semibold text-muted-foreground mb-3">
+            {user ? `Picked for your ${user.workoutStyle} style · Tap for details` : "All Workouts · Tap for details"}
+          </p>
           <div className="space-y-2 mb-5">
             {workouts.map((w) => (
               <ExpandableTipCard
