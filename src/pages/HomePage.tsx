@@ -62,10 +62,6 @@ const HomePage = ({ onNavigate }: HomePageProps) => {
           <span className="text-primary text-sm font-bold">⌚</span>
         </div>
       </div>
-        <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-          <span className="text-primary text-sm font-bold">⌚</span>
-        </div>
-      </div>
 
       {/* Daily Health Score */}
       <div className="glass-card rounded-3xl p-5 mb-5 health-glow-progress">
