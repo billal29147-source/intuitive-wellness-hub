@@ -15,14 +15,15 @@ const medicines = [
 
 const FoodPage = () => {
   const { metrics, updateMetric } = useHealthData();
+  const { user } = useAuth();
   const [editingMacros, setEditingMacros] = useState(false);
-  const [meals] = useState<Meal[]>(defaultMeals);
+  const meals = useMemo<Meal[]>(() => getDailyMeals(user), [user]);
   const [expandedMeal, setExpandedMeal] = useState<string | null>(null);
 
   const waterDone = metrics.water;
   const waterGoal = metrics.waterGoal;
   const waterTip = getWaterTip(metrics, user);
-  const recommendations = getSmartMealRecommendations(metrics);
+  const recommendations = getSmartMealRecommendations(metrics, user);
 
   const proteinProgress = Math.min(100, Math.round((metrics.protein / metrics.proteinGoal) * 100));
   const carbsProgress = Math.min(100, Math.round((metrics.carbs / metrics.carbsGoal) * 100));
