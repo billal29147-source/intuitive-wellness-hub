@@ -20,7 +20,7 @@ const FoodPage = () => {
 
   const waterDone = metrics.water;
   const waterGoal = metrics.waterGoal;
-  const waterTip = getWaterTip(metrics);
+  const waterTip = getWaterTip(metrics, user);
   const recommendations = getSmartMealRecommendations(metrics);
 
   const proteinProgress = Math.min(100, Math.round((metrics.protein / metrics.proteinGoal) * 100));
