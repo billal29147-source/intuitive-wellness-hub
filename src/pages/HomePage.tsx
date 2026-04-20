@@ -3,6 +3,8 @@ import MetricCard from "@/components/MetricCard";
 import HealthRing from "@/components/HealthRing";
 import { useState } from "react";
 import { useHealthData } from "@/contexts/HealthDataContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { calcBMI, bmiCategory } from "@/lib/profileMath";
 import { getStepsTip, getHeartTip, getSleepTip, getCaloriesTip, getWaterTip, getStreakTip, getSpo2Tip, getRespTip, getDistanceTip, getBodyCompTip, getHealthScoreTip } from "@/lib/healthTips";
 
 interface HomePageProps {
@@ -31,7 +33,16 @@ const explanations: Record<string, string> = {
 const HomePage = ({ onNavigate }: HomePageProps) => {
   const [showExplanation, setShowExplanation] = useState<string | null>(null);
   const { metrics, updateMetric, getStatusColor, getStatusLabel } = useHealthData();
+  const { user } = useAuth();
   const scoreInfo = getHealthScoreTip(metrics);
+  const bmi = user ? calcBMI(user) : null;
+  const bmiCat = bmi !== null ? bmiCategory(bmi) : null;
+  const greeting = (() => {
+    const h = new Date().getHours();
+    if (h < 12) return "Good Morning";
+    if (h < 18) return "Good Afternoon";
+    return "Good Evening";
+  })();
 
   const moveProgress = Math.round((metrics.activeCalories / metrics.caloriesGoal) * 100);
   const dailyProgress = Math.round((moveProgress + Math.min(100, Math.round((metrics.steps / metrics.stepsGoal) * 100))) / 2);
@@ -41,9 +52,16 @@ const HomePage = ({ onNavigate }: HomePageProps) => {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <p className="text-sm text-muted-foreground">Good Morning, Alex</p>
+          <p className="text-sm text-muted-foreground">{greeting}, {user?.name || "Friend"}</p>
           <h1 className="text-2xl font-bold">Health Dashboard</h1>
+          {bmi !== null && bmiCat && (
+            <p className={`text-[11px] mt-0.5 ${bmiCat.color}`}>BMI {bmi.toFixed(1)} · {bmiCat.label} · Goal: {user?.goal}</p>
+          )}
         </div>
+        <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+          <span className="text-primary text-sm font-bold">⌚</span>
+        </div>
+      </div>
         <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
           <span className="text-primary text-sm font-bold">⌚</span>
         </div>
