@@ -17,21 +17,23 @@ function profileNote(p?: UserProfile | null): string {
   return ` (BMI ${bmi.toFixed(1)} — ${cat.label}, goal: ${p.goal})`;
 }
 
-export function getStepsTip(m: HealthMetrics) {
+export function getStepsTip(m: HealthMetrics, p?: UserProfile | null) {
   const remaining = Math.max(0, m.stepsGoal - m.steps);
   const progress = Math.min(100, Math.round((m.steps / m.stepsGoal) * 100));
+  const goalNote = p ? ` Your goal of ${m.stepsGoal.toLocaleString()} is set for your ${p.activityLevel.replace("_", " ")} activity level.` : "";
   const summary = remaining === 0
-    ? `Amazing! You've hit your ${m.stepsGoal.toLocaleString()} step goal with ${m.steps.toLocaleString()} steps! 🎉`
-    : `You've taken ${m.steps.toLocaleString()} steps and need ${remaining.toLocaleString()} more to reach your ${m.stepsGoal.toLocaleString()} step goal.`;
+    ? `Amazing${p?.name ? `, ${p.name}` : ""}! You've hit your ${m.stepsGoal.toLocaleString()} step goal with ${m.steps.toLocaleString()} steps! 🎉`
+    : `You've taken ${m.steps.toLocaleString()} steps and need ${remaining.toLocaleString()} more.${goalNote}`;
+  const lossBoost = p?.goal === "lose" ? " Walking after meals also helps blunt blood-sugar spikes — key for fat loss." : "";
   const tips = remaining === 0
-    ? ["You've crushed your goal! Consider increasing it tomorrow.", "Stay active — even exceeding your goal has benefits.", "Great job! Walking is one of the best things for longevity."]
+    ? ["You've crushed your goal! Consider increasing it tomorrow.", "Stay active — even exceeding your goal has benefits.", `Walking is one of the best things for longevity${p && p.age >= 50 ? " — especially in your age group." : "."}`]
     : remaining < 2000
-      ? [`A quick 15-minute walk covers about 1,500-2,000 steps — you're almost there!`, "Try taking the stairs instead of the elevator for the rest of the day.", "Walk while on phone calls to add steps without extra time.", "Park farther from entrances to sneak in extra steps."]
-      : [`You need ${remaining.toLocaleString()} more steps. Try a 30-minute brisk walk to cover ~3,000 steps.`, "Break it up: 10-minute walks after each meal add up fast.", "Explore a new walking route to make it enjoyable.", "Set hourly reminders to get up and walk for 5 minutes."];
+      ? [`A quick 15-minute walk covers about 1,500-2,000 steps — you're almost there!${lossBoost}`, "Try taking the stairs instead of the elevator for the rest of the day.", "Walk while on phone calls to add steps without extra time.", "Park farther from entrances to sneak in extra steps."]
+      : [`You need ${remaining.toLocaleString()} more steps. Try a 30-minute brisk walk to cover ~3,000 steps.${lossBoost}`, "Break it up: 10-minute walks after each meal add up fast.", "Explore a new walking route to make it enjoyable.", "Set hourly reminders to get up and walk for 5 minutes."];
   return { summary, tips, progress };
 }
 
-export function getHeartTip(m: HealthMetrics) {
+export function getHeartTip(m: HealthMetrics, p?: UserProfile | null) {
   const bpm = m.heartRate;
   let summary: string, tips: string[];
   const progress = Math.min(100, Math.round(((100 - Math.abs(bpm - 65)) / 100) * 100));
@@ -61,37 +63,47 @@ export function getHeartTip(m: HealthMetrics) {
   return { summary, tips, progress: Math.max(0, progress) };
 }
 
-export function getSleepTip(m: HealthMetrics) {
+export function getSleepTip(m: HealthMetrics, p?: UserProfile | null) {
   const totalMin = m.sleepHours * 60 + m.sleepMinutes;
-  const goalMin = 480; // 8 hours
+  const band = ageBand(p?.age);
+  const goalMin = band === "teen" ? 540 : band === "senior" ? 450 : 480;
+  const goalH = Math.round(goalMin / 60);
   const progress = Math.min(100, Math.round((totalMin / goalMin) * 100));
   const diff = goalMin - totalMin;
   const summary = diff <= 0
-    ? `Great! You slept ${m.sleepHours}h ${m.sleepMinutes}m — you've met the 8-hour recommendation! Deep sleep: ${m.deepSleepHours}h ${m.deepSleepMinutes}m.`
-    : `You slept ${m.sleepHours}h ${m.sleepMinutes}m — you're ${diff} minutes short of 8 hours. Deep sleep: ${m.deepSleepHours}h ${m.deepSleepMinutes}m.`;
+    ? `Great! You slept ${m.sleepHours}h ${m.sleepMinutes}m — you've met your ${goalH}-hour target! Deep sleep: ${m.deepSleepHours}h ${m.deepSleepMinutes}m.`
+    : `You slept ${m.sleepHours}h ${m.sleepMinutes}m — you're ${diff} min short of your ${goalH}h target${p?.age ? ` (recommended for age ${p.age})` : ""}. Deep sleep: ${m.deepSleepHours}h ${m.deepSleepMinutes}m.`;
   const tips = diff > 60
-    ? [`Go to bed ${diff} minutes earlier tonight to hit your 8-hour goal.`, "Avoid screens 1 hour before bed — blue light delays deep sleep.", "Keep your room at 65-68°F (18-20°C) for optimal sleep quality.", "Consider a magnesium supplement before bed for deeper sleep."]
+    ? [`Go to bed ${diff} minutes earlier tonight to hit your ${goalH}-hour goal.`, "Avoid screens 1 hour before bed — blue light delays deep sleep.", "Keep your room at 65-68°F (18-20°C) for optimal sleep quality.", "Consider a magnesium supplement before bed for deeper sleep."]
     : diff > 0
       ? [`You're only ${diff} minutes away! Go to bed just a bit earlier tonight.`, "A consistent bedtime routine improves both sleep duration and quality.", "Avoid large meals 2-3 hours before bed for better sleep.", "Try reading instead of scrolling before bed."]
       : ["You're sleeping great! Maintain your current sleep schedule.", "Even with enough hours, consistency matters — try to sleep and wake at the same times.", "Track your deep sleep ratio — aim for 20-25% of total sleep.", "Quality > quantity: focus on minimizing wake-ups during the night."];
   return { summary, tips, progress };
 }
 
-export function getCaloriesTip(m: HealthMetrics) {
+export function getCaloriesTip(m: HealthMetrics, p?: UserProfile | null) {
   const remaining = Math.max(0, m.caloriesGoal - m.activeCalories);
   const progress = Math.min(100, Math.round((m.activeCalories / m.caloriesGoal) * 100));
+  const goalContext = p ? ` (set for your ${p.goal} goal)` : "";
   const summary = remaining === 0
-    ? `You've burned ${m.activeCalories} active calories — goal of ${m.caloriesGoal} achieved! 🔥`
-    : `You've burned ${m.activeCalories} active calories out of your ${m.caloriesGoal} goal. You need ${remaining} more!`;
+    ? `You've burned ${m.activeCalories} active calories — goal of ${m.caloriesGoal} achieved!${goalContext} 🔥`
+    : `You've burned ${m.activeCalories} of ${m.caloriesGoal} active cal${goalContext}. ${remaining} more to go!`;
+  const styleTip = p?.workoutStyle === "strength"
+    ? "Add 10 min of weighted carries — burns calories AND builds muscle."
+    : p?.workoutStyle === "yoga"
+      ? "A power-yoga flow can burn ~5 cal/min while still being recovery-friendly."
+      : p?.workoutStyle === "hiit"
+        ? "A 12-min Tabata circuit (8 rounds, 20s/10s) burns ~150 cal."
+        : "Mix bodyweight intervals with steady cardio for the best burn.";
   const tips = remaining === 0
     ? ["Goal smashed! Consider adding a cool-down stretch.", "Great burn today! Make sure to refuel with protein.", "You can increase your goal tomorrow if this felt comfortable."]
     : remaining < 100
       ? ["You're almost there! A quick 10-minute walk will finish it off.", "Light stretching or yoga can burn the remaining calories.", "Even household chores count — clean up and close your goal!"]
-      : [`A 20-minute HIIT session can burn 150-250 calories — perfect for your ${remaining} cal gap.`, "A 30-minute moderate walk burns about 100-150 calories.", "Try bodyweight exercises like burpees or jumping jacks for quick calorie burns.", "Dancing to music for 15 minutes burns roughly 100 calories!"];
+      : [`A 20-minute HIIT session can burn 150-250 calories — perfect for your ${remaining} cal gap.`, styleTip, "A 30-minute moderate walk burns about 100-150 calories.", "Dancing to music for 15 minutes burns roughly 100 calories!"];
   return { summary, tips, progress };
 }
 
-export function getWaterTip(m: HealthMetrics) {
+export function getWaterTip(m: HealthMetrics, p?: UserProfile | null) {
   const remaining = Math.max(0, m.waterGoal - m.water);
   const progress = Math.min(100, Math.round((m.water / m.waterGoal) * 100));
   const summary = remaining === 0
@@ -103,7 +115,7 @@ export function getWaterTip(m: HealthMetrics) {
   return { summary, tips, progress };
 }
 
-export function getStreakTip(m: HealthMetrics) {
+export function getStreakTip(m: HealthMetrics, _p?: UserProfile | null) {
   const nextMilestone = m.streak < 7 ? 7 : m.streak < 14 ? 14 : m.streak < 21 ? 21 : m.streak < 30 ? 30 : m.streak < 60 ? 60 : m.streak < 100 ? 100 : m.streak + 10;
   const daysLeft = nextMilestone - m.streak;
   const progress = Math.min(100, Math.round((m.streak / nextMilestone) * 100));
@@ -117,7 +129,7 @@ export function getStreakTip(m: HealthMetrics) {
   return { summary, tips, progress };
 }
 
-export function getSpo2Tip(m: HealthMetrics) {
+export function getSpo2Tip(m: HealthMetrics, _p?: UserProfile | null) {
   const val = m.spo2;
   const progress = val;
   let summary: string, tips: string[];
@@ -134,7 +146,7 @@ export function getSpo2Tip(m: HealthMetrics) {
   return { summary, tips, progress };
 }
 
-export function getRespTip(m: HealthMetrics) {
+export function getRespTip(m: HealthMetrics, _p?: UserProfile | null) {
   const val = m.respRate;
   const progress = val <= 20 && val >= 12 ? Math.round(((20 - Math.abs(val - 16)) / 20) * 100) : val < 12 ? 30 : 30;
   let summary: string, tips: string[];
@@ -151,7 +163,7 @@ export function getRespTip(m: HealthMetrics) {
   return { summary, tips, progress: Math.max(0, Math.min(100, progress)) };
 }
 
-export function getDistanceTip(m: HealthMetrics) {
+export function getDistanceTip(m: HealthMetrics, _p?: UserProfile | null) {
   const remaining = Math.max(0, m.distanceGoal - m.distance);
   const progress = Math.min(100, Math.round((m.distance / m.distanceGoal) * 100));
   const summary = remaining === 0
@@ -163,20 +175,21 @@ export function getDistanceTip(m: HealthMetrics) {
   return { summary, tips, progress };
 }
 
-export function getBodyCompTip(m: HealthMetrics) {
+export function getBodyCompTip(m: HealthMetrics, p?: UserProfile | null) {
   const progress = Math.min(100, Math.round(((30 - m.bodyFat) / 30) * 100));
+  const note = profileNote(p);
   let summary: string, tips: string[];
   if (m.bodyFat < 10) {
-    summary = `Your body fat is ${m.bodyFat}% — extremely low. This level is hard to sustain healthily.`;
+    summary = `Your body fat is ${m.bodyFat}% — extremely low.${note}`;
     tips = ["Body fat below 10% is typically only for competition — not sustainable long-term.", "Ensure adequate calorie intake to maintain hormonal health.", "Very low body fat can weaken immune function.", "Consider consulting a sports nutritionist."];
   } else if (m.bodyFat <= 20) {
-    summary = `Your body fat is ${m.bodyFat}% with ${m.leanMass} kg lean mass — athletic range! Great shape.`;
-    tips = ["You're in great shape! Maintain with consistent strength training.", "Focus on protein intake (1.6-2.2g/kg) to preserve lean mass.", "Track monthly — small fluctuations are normal.", "Balance strength and cardio for overall fitness."];
+    summary = `Your body fat is ${m.bodyFat}% with ${m.leanMass} kg lean mass — athletic range!${note}`;
+    tips = ["You're in great shape! Maintain with consistent strength training.", `Hit ~${p ? Math.round((p.units === "imperial" ? p.weight * 0.4536 : p.weight) * 1.8) : "120-150"}g protein/day to preserve lean mass.`, "Track monthly — small fluctuations are normal.", "Balance strength and cardio for overall fitness."];
   } else if (m.bodyFat <= 30) {
-    summary = `Your body fat is ${m.bodyFat}% with ${m.leanMass} kg lean mass. Aim for 15-20% for athletic fitness.`;
-    tips = ["Strength training 3-4x per week builds lean mass and burns more calories at rest.", "Eat 1.6-2.2g protein per kg body weight daily.", "Reduce refined carbs and sugars for fat loss.", "Track body composition monthly, not daily."];
+    summary = `Your body fat is ${m.bodyFat}% with ${m.leanMass} kg lean mass.${note} Aim for 15-20% for athletic fitness.`;
+    tips = ["Strength training 3-4x per week builds lean mass and burns more calories at rest.", "Eat 1.6-2.2g protein per kg body weight daily.", p?.goal === "lose" ? "Aim for a ~500 cal/day deficit (~0.5 kg/week loss)." : "Reduce refined carbs and sugars to recomp body fat.", "Track body composition monthly, not daily."];
   } else {
-    summary = `Your body fat is ${m.bodyFat}% — above recommended range. Focus on gradual fat loss for better health.`;
+    summary = `Your body fat is ${m.bodyFat}% — above recommended range.${note} Focus on gradual fat loss.`;
     tips = ["Start with 30 minutes of moderate exercise daily.", "Reduce processed foods and increase whole foods.", "Aim to lose 0.5-1% body fat per month for sustainable results.", "Consult a nutritionist for a personalized plan."];
   }
   return { summary, tips, progress: Math.max(0, progress) };
