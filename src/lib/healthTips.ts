@@ -1,4 +1,21 @@
 import { HealthMetrics } from "@/contexts/HealthDataContext";
+import { UserProfile } from "@/contexts/AuthContext";
+import { calcBMI, bmiCategory } from "@/lib/profileMath";
+
+function ageBand(age?: number): "teen" | "young" | "adult" | "senior" {
+  if (!age) return "adult";
+  if (age < 20) return "teen";
+  if (age < 35) return "young";
+  if (age < 60) return "adult";
+  return "senior";
+}
+
+function profileNote(p?: UserProfile | null): string {
+  if (!p) return "";
+  const bmi = calcBMI(p);
+  const cat = bmiCategory(bmi);
+  return ` (BMI ${bmi.toFixed(1)} — ${cat.label}, goal: ${p.goal})`;
+}
 
 export function getStepsTip(m: HealthMetrics) {
   const remaining = Math.max(0, m.stepsGoal - m.steps);
