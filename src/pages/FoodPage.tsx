@@ -174,27 +174,29 @@ const FoodPage = () => {
           <p className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-1.5">
             <Lightbulb className="w-4 h-4 text-health-progress" /> Smart Picks For Your Health
           </p>
-          <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2 mb-5 -mx-5 px-5 snap-x">
-            {recommendations.map((rec, i) => (
-              <div key={i} className="glass-card rounded-2xl p-4 min-w-[200px] snap-start flex-shrink-0">
-                <div className="flex items-center gap-2 mb-2">
-                  <Apple className="w-4 h-4 text-health-progress" />
-                  <p className="text-sm font-semibold">{rec.name}</p>
-                </div>
-                <p className="text-[10px] text-muted-foreground mb-2">{rec.type}</p>
-                <div className="flex gap-3 mb-2">
-                  <div>
-                    <p className="text-[9px] text-muted-foreground">CAL</p>
-                    <p className="text-xs font-bold text-health-calories">{rec.calories}</p>
+          <div className="-mx-5 mb-5">
+            <div className="flex gap-3 overflow-x-auto no-scrollbar px-5 pb-2 snap-x">
+              {recommendations.map((rec, i) => (
+                <div key={i} className="glass-card rounded-2xl p-4 w-[200px] snap-start flex-shrink-0 flex flex-col">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Apple className="w-4 h-4 text-health-progress flex-shrink-0" />
+                    <p className="text-sm font-semibold leading-tight">{rec.name}</p>
                   </div>
-                  <div>
-                    <p className="text-[9px] text-muted-foreground">PROTEIN</p>
-                    <p className="text-xs font-bold text-health-heart">{rec.protein}g</p>
+                  <p className="text-[10px] text-muted-foreground mb-2">{rec.type}</p>
+                  <div className="flex gap-3 mb-2">
+                    <div>
+                      <p className="text-[9px] text-muted-foreground">CAL</p>
+                      <p className="text-xs font-bold text-health-calories">{rec.calories}</p>
+                    </div>
+                    <div>
+                      <p className="text-[9px] text-muted-foreground">PROTEIN</p>
+                      <p className="text-xs font-bold text-health-heart">{rec.protein}g</p>
+                    </div>
                   </div>
+                  <p className="text-[10px] text-muted-foreground leading-snug">{rec.reason}</p>
                 </div>
-                <p className="text-[10px] text-muted-foreground leading-snug">{rec.reason}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </>
       )}
