@@ -1,4 +1,14 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { useAuth } from "./AuthContext";
+import {
+  calcActiveCalorieGoal,
+  calcCarbsGoal,
+  calcDailyCalorieGoal,
+  calcFatsGoal,
+  calcProteinGoal,
+  calcStepsGoal,
+  calcWaterGoal,
+} from "@/lib/profileMath";
 
 export interface HealthMetrics {
   steps: number;
@@ -34,7 +44,7 @@ export interface HealthMetrics {
   age: number;
 }
 
-const defaultMetrics: HealthMetrics = {
+const baseMetrics: HealthMetrics = {
   steps: 8432,
   stepsGoal: 10000,
   heartRate: 72,
@@ -99,8 +109,43 @@ function getRespStatus(val: number): { label: string; color: string } {
 
 const HealthDataContext = createContext<HealthDataContextType | null>(null);
 
+const STORAGE_PREFIX = "app_health_metrics_";
+
 export const HealthDataProvider = ({ children }: { children: ReactNode }) => {
-  const [metrics, setMetrics] = useState<HealthMetrics>(defaultMetrics);
+  const { user } = useAuth();
+  const [metrics, setMetrics] = useState<HealthMetrics>(baseMetrics);
+
+  // Hydrate from per-user profile + storage
+  useEffect(() => {
+    if (!user) return;
+    const stored = localStorage.getItem(STORAGE_PREFIX + user.email);
+    if (stored) {
+      try {
+        setMetrics(JSON.parse(stored));
+        return;
+      } catch {}
+    }
+    // Build personalized defaults from profile
+    const personalized: HealthMetrics = {
+      ...baseMetrics,
+      weight: user.weight,
+      height: user.height,
+      age: user.age,
+      stepsGoal: calcStepsGoal(user),
+      caloriesGoal: calcActiveCalorieGoal(user),
+      waterGoal: calcWaterGoal(user),
+      proteinGoal: calcProteinGoal(user),
+      carbsGoal: calcCarbsGoal(user),
+      fatsGoal: calcFatsGoal(user),
+      totalCaloriesFoodGoal: calcDailyCalorieGoal(user),
+    };
+    setMetrics(personalized);
+  }, [user]);
+
+  // Persist
+  useEffect(() => {
+    if (user) localStorage.setItem(STORAGE_PREFIX + user.email, JSON.stringify(metrics));
+  }, [metrics, user]);
 
   const updateMetric = (key: keyof HealthMetrics, value: number) => {
     setMetrics((prev) => ({ ...prev, [key]: value }));
