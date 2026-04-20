@@ -1,4 +1,5 @@
 import { X, Bluetooth, Watch, Bell, Moon, Shield, HelpCircle, LogOut, ChevronRight, Droplets, Pill } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface SettingsMenuProps {
   open: boolean;
@@ -17,6 +18,7 @@ const settingsItems = [
 ];
 
 const SettingsMenu = ({ open, onClose }: SettingsMenuProps) => {
+  const { user, signOut } = useAuth();
   return (
     <>
       <div
@@ -37,8 +39,8 @@ const SettingsMenu = ({ open, onClose }: SettingsMenuProps) => {
           <div className="glass-card rounded-2xl p-4 mb-5 flex items-center gap-3">
             <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-xl">👤</div>
             <div>
-              <p className="font-medium">Alex Johnson</p>
-              <p className="text-xs text-muted-foreground">Premium Member</p>
+              <p className="font-medium">{user?.name || "Guest"}</p>
+              <p className="text-xs text-muted-foreground">{user?.email || "Not signed in"}</p>
             </div>
           </div>
 
@@ -62,7 +64,7 @@ const SettingsMenu = ({ open, onClose }: SettingsMenuProps) => {
           </div>
 
           <div className="mt-auto pt-5">
-            <button className="flex items-center gap-2 text-destructive text-sm font-medium p-3">
+            <button onClick={signOut} className="flex items-center gap-2 text-destructive text-sm font-medium p-3">
               <LogOut className="w-4 h-4" /> Sign Out
             </button>
           </div>
