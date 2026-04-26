@@ -119,10 +119,16 @@ const MetricCard = ({ icon: Icon, label, value, subtitle, colorClass, glowClass,
         <div className="mt-3 pt-3 border-t border-border/50 space-y-2">
           {goalTip.progress !== undefined && (
             <div className="w-full bg-muted/50 rounded-full h-2 mb-2">
-              <div className={`h-2 rounded-full bg-current ${colorClass}`} style={{ width: `${Math.min(goalTip.progress, 100)}%` }} />
+              <div className={`h-2 rounded-full bg-current ${effColor}`} style={{ width: `${Math.min(goalTip.progress, 100)}%` }} />
             </div>
           )}
-          <p className="text-xs font-semibold">{goalTip.summary}</p>
+          <p className={`text-xs font-semibold ${critical ? "text-destructive" : ""}`}>{goalTip.summary}</p>
+          {goalTip.action && (
+            <div className={`rounded-lg px-2 py-1.5 mt-1 ${critical ? "bg-destructive/15 border border-destructive/40" : warn ? "bg-health-calories/10 border border-health-calories/30" : "bg-primary/10 border border-primary/30"}`}>
+              <p className="text-[10px] uppercase tracking-wider font-bold opacity-70 mb-0.5">Do this now</p>
+              <p className={`text-[11px] font-medium leading-snug ${critical ? "text-destructive" : warn ? "text-health-calories" : "text-foreground"}`}>{goalTip.action}</p>
+            </div>
+          )}
           {goalTip.tips.map((tip, i) => (
             <div key={i} className="flex items-start gap-2">
               <span className="text-[10px] mt-0.5">💡</span>
