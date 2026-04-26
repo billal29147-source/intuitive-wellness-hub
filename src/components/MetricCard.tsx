@@ -13,6 +13,8 @@ interface MetricCardProps {
     summary: string;
     tips: string[];
     progress?: number;
+    severity?: "ok" | "warn" | "critical";
+    action?: string;
   };
   editable?: {
     fields: { key: string; label: string; value: number; unit: string; min?: number; max?: number; step?: number }[];
