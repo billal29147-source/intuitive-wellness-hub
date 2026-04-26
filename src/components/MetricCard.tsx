@@ -51,14 +51,22 @@ const MetricCard = ({ icon: Icon, label, value, subtitle, colorClass, glowClass,
     }
   };
 
+  const sev = goalTip?.severity ?? "ok";
+  const critical = sev === "critical";
+  const warn = sev === "warn";
+  const effColor = critical ? "text-destructive" : warn ? "text-health-calories" : colorClass;
+  const effGlow = critical ? "ring-1 ring-destructive/60 shadow-[0_0_20px_-5px_hsl(var(--destructive)/0.6)] animate-pulse-slow" : glowClass;
+
   return (
     <div
-      className={`glass-card rounded-2xl p-4 ${glowClass} animate-slide-up cursor-pointer transition-all duration-300 ${expanded ? "col-span-2" : ""}`}
+      className={`glass-card rounded-2xl p-4 ${effGlow} animate-slide-up cursor-pointer transition-all duration-300 ${expanded ? "col-span-2" : ""}`}
       onClick={() => !editing && goalTip && setExpanded(!expanded)}
     >
       <div className="flex items-center gap-2 mb-2">
-        <Icon className={`w-4 h-4 ${colorClass}`} />
+        <Icon className={`w-4 h-4 ${effColor}`} />
         <span className="text-xs text-muted-foreground uppercase tracking-wider flex-1">{label}</span>
+        {critical && <span className="text-[9px] font-bold text-destructive uppercase">⚠ Critical</span>}
+        {warn && !critical && <span className="text-[9px] font-bold text-health-calories uppercase">! Watch</span>}
         {editable && !editing && (
           <button onClick={startEditing} className="opacity-50 hover:opacity-100 transition-opacity">
             <Pencil className="w-3 h-3 text-muted-foreground" />
@@ -78,10 +86,10 @@ const MetricCard = ({ icon: Icon, label, value, subtitle, colorClass, glowClass,
           </button>
         )}
       </div>
-      <p className={`text-2xl font-bold ${colorClass}`}>{value}</p>
+      <p className={`text-2xl font-bold ${effColor}`}>{value}</p>
       {subtitle && <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>}
       {statusLabel && (
-        <p className={`text-xs font-semibold mt-1 ${statusColor || colorClass}`}>{statusLabel}</p>
+        <p className={`text-xs font-semibold mt-1 ${critical ? "text-destructive" : statusColor || colorClass}`}>{statusLabel}</p>
       )}
 
       {/* Edit Mode */}
