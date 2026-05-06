@@ -1,0 +1,161 @@
+.workout-anim-wrap {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Color mapping */
+.anim-health-steps .workout-anim * { --anim-color: hsl(142 70% 50%); }
+.anim-health-heart .workout-anim * { --anim-color: hsl(0 85% 60%); }
+.anim-health-sleep .workout-anim * { --anim-color: hsl(220 80% 60%); }
+.anim-health-calories .workout-anim * { --anim-color: hsl(30 90% 55%); }
+.anim-health-progress .workout-anim * { --anim-color: hsl(270 70% 60%); }
+
+.workout-anim {
+  position: relative;
+  width: 32px;
+  height: 32px;
+}
+
+/* === HIIT - jumping jack figure === */
+.hiit-figure {
+  position: absolute;
+  inset: 0;
+  animation: hiit-jump 0.6s ease-in-out infinite;
+}
+.hiit-head {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--anim-color);
+  position: absolute; top: 2px; left: 50%; transform: translateX(-50%);
+}
+.hiit-body {
+  width: 2px; height: 10px;
+  background: var(--anim-color);
+  position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+}
+.hiit-leg {
+  width: 2px; height: 8px; background: var(--anim-color);
+  position: absolute; top: 18px; transform-origin: top center;
+}
+.hiit-leg.left { left: 11px; animation: hiit-leg-l 0.6s ease-in-out infinite; }
+.hiit-leg.right { left: 19px; animation: hiit-leg-r 0.6s ease-in-out infinite; }
+.hiit-arm {
+  width: 2px; height: 7px; background: var(--anim-color);
+  position: absolute; top: 9px; transform-origin: top center;
+}
+.hiit-arm.left { left: 10px; animation: hiit-arm-l 0.6s ease-in-out infinite; }
+.hiit-arm.right { left: 20px; animation: hiit-arm-r 0.6s ease-in-out infinite; }
+
+@keyframes hiit-jump { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+@keyframes hiit-leg-l { 0%,100%{transform:rotate(0)} 50%{transform:rotate(-30deg)} }
+@keyframes hiit-leg-r { 0%,100%{transform:rotate(0)} 50%{transform:rotate(30deg)} }
+@keyframes hiit-arm-l { 0%,100%{transform:rotate(0)} 50%{transform:rotate(-50deg)} }
+@keyframes hiit-arm-r { 0%,100%{transform:rotate(0)} 50%{transform:rotate(50deg)} }
+
+/* === STRENGTH - barbell lift === */
+.strength {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.barbell {
+  display: flex; align-items: center; animation: lift 1s ease-in-out infinite;
+}
+.bar { width: 18px; height: 2px; background: var(--anim-color); }
+.plate { width: 3px; height: 10px; border-radius: 1px; background: var(--anim-color); }
+.plate.big { height: 14px; width: 4px; }
+.lifter {
+  width: 4px; height: 8px; background: var(--anim-color); border-radius: 1px;
+  margin-top: 2px; opacity: 0.6;
+}
+@keyframes lift { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+
+/* === YOGA - tree pose breathing === */
+.yoga-figure { position: absolute; inset: 0; animation: yoga-breathe 3s ease-in-out infinite; }
+.yoga-head {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--anim-color);
+  position: absolute; top: 2px; left: 50%; transform: translateX(-50%);
+}
+.yoga-body {
+  width: 2px; height: 12px; background: var(--anim-color);
+  position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+}
+.yoga-arm {
+  width: 2px; height: 9px; background: var(--anim-color);
+  position: absolute; top: 8px; transform-origin: bottom center;
+}
+.yoga-arm.left { left: 10px; transform: rotate(140deg); }
+.yoga-arm.right { left: 20px; transform: rotate(-140deg); }
+.yoga-leg {
+  width: 2px; height: 10px; background: var(--anim-color);
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+}
+@keyframes yoga-breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+
+/* === CARDIO - running figure === */
+.cardio { position: relative; }
+.runner { position: absolute; inset: 0; }
+.runner-head {
+  width: 5px; height: 5px; border-radius: 50%; background: var(--anim-color);
+  position: absolute; top: 3px; left: 14px;
+}
+.runner-body {
+  width: 2px; height: 10px; background: var(--anim-color);
+  position: absolute; top: 8px; left: 15px; transform: rotate(-10deg);
+}
+.runner-leg {
+  width: 2px; height: 9px; background: var(--anim-color);
+  position: absolute; top: 17px; left: 15px; transform-origin: top;
+}
+.runner-leg.left { animation: run-leg-l 0.4s ease-in-out infinite; }
+.runner-leg.right { animation: run-leg-r 0.4s ease-in-out infinite; }
+.runner-arm {
+  width: 2px; height: 7px; background: var(--anim-color);
+  position: absolute; top: 9px; left: 15px; transform-origin: top;
+}
+.runner-arm.left { animation: run-arm-l 0.4s ease-in-out infinite; }
+.runner-arm.right { animation: run-arm-r 0.4s ease-in-out infinite; }
+
+.cardio.fast .runner-leg.left, .cardio.fast .runner-leg.right,
+.cardio.fast .runner-arm.left, .cardio.fast .runner-arm.right {
+  animation-duration: 0.25s;
+}
+
+.speed-lines {
+  position: absolute; left: 2px; top: 50%; transform: translateY(-50%);
+}
+.speed-lines span {
+  display: block; width: 6px; height: 1px; background: var(--anim-color);
+  margin: 3px 0; opacity: 0; animation: speed-line 0.5s ease-out infinite;
+}
+.speed-lines span:nth-child(2) { animation-delay: 0.15s; width: 4px; }
+.speed-lines span:nth-child(3) { animation-delay: 0.3s; width: 5px; }
+
+@keyframes run-leg-l { 0%,100%{transform:rotate(-30deg)} 50%{transform:rotate(30deg)} }
+@keyframes run-leg-r { 0%,100%{transform:rotate(30deg)} 50%{transform:rotate(-30deg)} }
+@keyframes run-arm-l { 0%,100%{transform:rotate(25deg)} 50%{transform:rotate(-25deg)} }
+@keyframes run-arm-r { 0%,100%{transform:rotate(-25deg)} 50%{transform:rotate(25deg)} }
+@keyframes speed-line { 0%{opacity:0.7;transform:translateX(0)} 100%{opacity:0;transform:translateX(-6px)} }
+
+/* === STRETCH - side stretch === */
+.stretch-figure { position: absolute; inset: 0; animation: side-stretch 2s ease-in-out infinite; }
+.stretch-head {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--anim-color);
+  position: absolute; top: 3px; left: 50%; transform: translateX(-50%);
+}
+.stretch-body {
+  width: 2px; height: 12px; background: var(--anim-color);
+  position: absolute; top: 9px; left: 50%; transform: translateX(-50%);
+}
+.stretch-arm {
+  width: 2px; height: 10px; background: var(--anim-color);
+  position: absolute; top: 6px; left: 50%; transform-origin: bottom center;
+  animation: stretch-arm 2s ease-in-out infinite;
+}
+.stretch-leg {
+  width: 2px; height: 10px; background: var(--anim-color);
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+}
+@keyframes side-stretch { 0%,100%{transform:rotate(0)} 50%{transform:rotate(10deg)} }
+@keyframes stretch-arm { 0%,100%{transform:rotate(-10deg)} 50%{transform:rotate(-160deg)} }
