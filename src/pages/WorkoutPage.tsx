@@ -140,7 +140,7 @@ const WorkoutPage = () => {
                   `This burns ~${w.caloriesNum} cal — ${Math.round((w.caloriesNum / Math.max(1, metrics.caloriesGoal - metrics.activeCalories)) * 100)}% of your remaining ${Math.max(0, metrics.caloriesGoal - metrics.activeCalories)} cal goal.`,
                   ...w.tips,
                 ]}
-                rightContent={<span className={`text-xs font-medium ${w.color} mr-1`}>{w.intensity}</span>}
+                rightContent={<WorkoutAnimation name={w.name} color={w.color} />}
               />
             ))}
           </div>
