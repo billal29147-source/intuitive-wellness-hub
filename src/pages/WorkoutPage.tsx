@@ -4,6 +4,7 @@ import { useHealthData } from "@/contexts/HealthDataContext";
 import { useAuth } from "@/contexts/AuthContext";
 import ExpandableTipCard from "@/components/ExpandableTipCard";
 import { getPersonalizedWorkouts, getRecommendedWorkout } from "@/lib/workoutData";
+import WorkoutAnimation from "@/components/WorkoutAnimation";
 
 const WorkoutPage = () => {
   const [mode, setMode] = useState<"active" | "resting">("active");
@@ -113,11 +114,7 @@ const WorkoutPage = () => {
               summary={recommendedTip.summary}
               tips={recommendedTip.tips}
               progress={recommendedTip.progress}
-              rightContent={
-                <div className="w-10 h-10 rounded-full bg-health-calories/20 flex items-center justify-center mr-1">
-                  <Play className="w-4 h-4 text-health-calories ml-0.5" />
-                </div>
-              }
+              rightContent={<WorkoutAnimation name={recWorkout.name} color="text-health-calories" />}
             />
           </div>
 
@@ -139,7 +136,7 @@ const WorkoutPage = () => {
                   `This burns ~${w.caloriesNum} cal — ${Math.round((w.caloriesNum / Math.max(1, metrics.caloriesGoal - metrics.activeCalories)) * 100)}% of your remaining ${Math.max(0, metrics.caloriesGoal - metrics.activeCalories)} cal goal.`,
                   ...w.tips,
                 ]}
-                rightContent={<span className={`text-xs font-medium ${w.color} mr-1`}>{w.intensity}</span>}
+                rightContent={<WorkoutAnimation name={w.name} color={w.color} />}
               />
             ))}
           </div>
