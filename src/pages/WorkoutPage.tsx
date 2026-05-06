@@ -116,7 +116,9 @@ const WorkoutPage = () => {
               tips={recommendedTip.tips}
               progress={recommendedTip.progress}
               rightContent={<WorkoutAnimation name={recWorkout.name} color="text-health-calories" />}
-            />
+            >
+              <ExerciseList exercises={getExercisesForWorkout(recWorkout.name, user)} color="text-health-calories" />
+            </ExpandableTipCard>
           </div>
 
           {/* Workout List - Clickable with Details */}
