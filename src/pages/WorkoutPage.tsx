@@ -114,11 +114,7 @@ const WorkoutPage = () => {
               summary={recommendedTip.summary}
               tips={recommendedTip.tips}
               progress={recommendedTip.progress}
-              rightContent={
-                <div className="w-10 h-10 rounded-full bg-health-calories/20 flex items-center justify-center mr-1">
-                  <Play className="w-4 h-4 text-health-calories ml-0.5" />
-                </div>
-              }
+              rightContent={<WorkoutAnimation name={recWorkout.name} color="text-health-calories" />}
             />
           </div>
 
