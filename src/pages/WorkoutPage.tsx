@@ -4,6 +4,7 @@ import { useHealthData } from "@/contexts/HealthDataContext";
 import { useAuth } from "@/contexts/AuthContext";
 import ExpandableTipCard from "@/components/ExpandableTipCard";
 import { getPersonalizedWorkouts, getRecommendedWorkout } from "@/lib/workoutData";
+import WorkoutAnimation from "@/components/WorkoutAnimation";
 
 const WorkoutPage = () => {
   const [mode, setMode] = useState<"active" | "resting">("active");
