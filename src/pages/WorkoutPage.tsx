@@ -5,7 +5,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import ExpandableTipCard from "@/components/ExpandableTipCard";
 import { getPersonalizedWorkouts, getRecommendedWorkout } from "@/lib/workoutData";
 import WorkoutAnimation from "@/components/WorkoutAnimation";
-
+import ExerciseList from "@/components/ExerciseList";
+import { getExercisesForWorkout } from "@/lib/exerciseData";
 const WorkoutPage = () => {
   const [mode, setMode] = useState<"active" | "resting">("active");
   const { metrics, getStatusColor, getStatusLabel } = useHealthData();
@@ -115,7 +116,9 @@ const WorkoutPage = () => {
               tips={recommendedTip.tips}
               progress={recommendedTip.progress}
               rightContent={<WorkoutAnimation name={recWorkout.name} color="text-health-calories" />}
-            />
+            >
+              <ExerciseList exercises={getExercisesForWorkout(recWorkout.name, user)} color="text-health-calories" />
+            </ExpandableTipCard>
           </div>
 
           {/* Workout List - Clickable with Details */}
@@ -137,7 +140,9 @@ const WorkoutPage = () => {
                   ...w.tips,
                 ]}
                 rightContent={<WorkoutAnimation name={w.name} color={w.color} />}
-              />
+              >
+                <ExerciseList exercises={getExercisesForWorkout(w.name, user)} color={w.color} />
+              </ExpandableTipCard>
             ))}
           </div>
 

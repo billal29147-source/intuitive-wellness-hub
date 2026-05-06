@@ -1,0 +1,273 @@
+/* ===== Exercise Animation System ===== */
+.ex-anim-wrap {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.exanim-health-steps .ex-anim * { --c: hsl(142 70% 50%); }
+.exanim-health-heart .ex-anim * { --c: hsl(0 85% 60%); }
+.exanim-health-sleep .ex-anim * { --c: hsl(220 80% 60%); }
+.exanim-health-calories .ex-anim * { --c: hsl(30 90% 55%); }
+.exanim-health-progress .ex-anim * { --c: hsl(270 70% 60%); }
+
+.ex-anim { position: relative; width: 28px; height: 28px; }
+.ex-head { width: 5px; height: 5px; border-radius: 50%; background: var(--c); position: absolute; }
+.ex-torso { width: 2px; background: var(--c); position: absolute; }
+.ex-arm, .ex-leg { width: 2px; background: var(--c); position: absolute; transform-origin: top center; }
+
+/* ===== BURPEE ===== */
+.burpee-fig { animation: burpee-cycle 1.2s ease-in-out infinite; }
+.burpee-fig .ex-head { top: 1px; left: 12px; }
+.burpee-fig .ex-torso { height: 8px; top: 6px; left: 13px; }
+.burpee-fig .ex-arm.l { height: 6px; top: 7px; left: 10px; }
+.burpee-fig .ex-arm.r { height: 6px; top: 7px; left: 16px; }
+.burpee-fig .ex-leg.l { height: 7px; top: 14px; left: 11px; }
+.burpee-fig .ex-leg.r { height: 7px; top: 14px; left: 15px; }
+@keyframes burpee-cycle {
+  0%,100% { transform: translateY(0) scaleY(1); }
+  25% { transform: translateY(8px) scaleY(0.6) rotate(90deg); }
+  50% { transform: translateY(8px) scaleY(0.6); }
+  75% { transform: translateY(-4px) scaleY(1.1); }
+}
+
+/* ===== JUMP SQUAT ===== */
+.jsquat-fig .ex-head { top: 2px; left: 12px; }
+.jsquat-fig .ex-torso { height: 8px; top: 7px; left: 13px; }
+.jsquat-fig .ex-leg.l { height: 8px; top: 15px; left: 10px; }
+.jsquat-fig .ex-leg.r { height: 8px; top: 15px; left: 16px; }
+.jsquat-fig { animation: jsquat 0.7s ease-in-out infinite; }
+@keyframes jsquat {
+  0%,100% { transform: translateY(0) scaleY(1); }
+  40% { transform: translateY(4px) scaleY(0.75); }
+  70% { transform: translateY(-6px); }
+}
+
+/* ===== MOUNTAIN CLIMBER ===== */
+.mclimb-fig { transform: rotate(15deg); }
+.mclimb-fig .ex-head { top: 4px; left: 18px; }
+.mclimb-fig .ex-torso { height: 10px; top: 8px; left: 14px; transform: rotate(-30deg); }
+.mclimb-fig .ex-arm.l { height: 6px; top: 6px; left: 20px; transform: rotate(20deg); }
+.mclimb-fig .ex-arm.r { height: 6px; top: 6px; left: 22px; transform: rotate(-10deg); }
+.mclimb-fig .ex-leg.l { height: 8px; top: 16px; left: 10px; animation: mclimb-l 0.4s ease infinite; }
+.mclimb-fig .ex-leg.r { height: 8px; top: 16px; left: 14px; animation: mclimb-r 0.4s ease infinite; }
+@keyframes mclimb-l { 0%,100% { transform: rotate(-40deg); } 50% { transform: rotate(20deg); } }
+@keyframes mclimb-r { 0%,100% { transform: rotate(20deg); } 50% { transform: rotate(-40deg); } }
+
+/* ===== HIGH KNEES ===== */
+.hknees-fig .ex-head { top: 1px; left: 12px; }
+.hknees-fig .ex-torso { height: 9px; top: 6px; left: 13px; }
+.hknees-fig .ex-leg.l { height: 8px; top: 15px; left: 11px; animation: hk-l 0.35s ease infinite; }
+.hknees-fig .ex-leg.r { height: 8px; top: 15px; left: 15px; animation: hk-r 0.35s ease infinite; }
+@keyframes hk-l { 0%,100% { transform: rotate(0); } 50% { transform: rotate(-80deg); } }
+@keyframes hk-r { 0%,100% { transform: rotate(-80deg); } 50% { transform: rotate(0); } }
+
+/* ===== PLANK JACK ===== */
+.plank-fig { transform: rotate(0deg); }
+.plank-fig .ex-head { top: 10px; left: 20px; }
+.plank-fig .ex-torso { height: 12px; top: 10px; left: 12px; transform: rotate(-80deg); }
+.plank-fig .ex-leg.l { height: 6px; top: 18px; left: 6px; animation: pj-l 0.5s ease infinite; }
+.plank-fig .ex-leg.r { height: 6px; top: 18px; left: 10px; animation: pj-r 0.5s ease infinite; }
+@keyframes pj-l { 0%,100% { transform: rotate(0) translateX(0); } 50% { transform: rotate(0) translateX(-3px); } }
+@keyframes pj-r { 0%,100% { transform: rotate(0) translateX(0); } 50% { transform: rotate(0) translateX(3px); } }
+
+/* ===== BENCH PRESS ===== */
+.bench-fig { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.bench-body { width: 14px; height: 3px; background: var(--c); border-radius: 1px; opacity: 0.5; }
+.bench-bar { display: flex; align-items: center; animation: bench-lift 1s ease-in-out infinite; margin-top: -1px; }
+.bb { width: 14px; height: 2px; background: var(--c); }
+.bp { width: 3px; height: 8px; background: var(--c); border-radius: 1px; }
+.bp.big { height: 10px; }
+@keyframes bench-lift { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+/* ===== SQUAT ===== */
+.squat-fig .ex-head { top: 1px; left: 12px; }
+.squat-fig .ex-torso { height: 8px; top: 6px; left: 13px; }
+.squat-fig .sq-bar { width: 16px; height: 2px; background: var(--c); position: absolute; top: 4px; left: 6px; }
+.squat-fig .ex-leg.l { height: 8px; top: 14px; left: 10px; }
+.squat-fig .ex-leg.r { height: 8px; top: 14px; left: 16px; }
+.squat-fig { animation: sq-move 1s ease-in-out infinite; }
+@keyframes sq-move { 0%,100% { transform: scaleY(1) translateY(0); } 50% { transform: scaleY(0.8) translateY(4px); } }
+
+/* ===== DEADLIFT ===== */
+.dlift-fig .ex-head { top: 2px; left: 12px; }
+.dlift-fig .ex-torso { height: 10px; top: 7px; left: 13px; }
+.dlift-fig .dl-bar { display: flex; align-items: center; position: absolute; bottom: 2px; left: 3px; }
+.dlift-fig { animation: dl-move 1.2s ease-in-out infinite; }
+@keyframes dl-move {
+  0%,100% { transform: rotate(0deg) translateY(0); }
+  50% { transform: rotate(20deg) translateY(4px); }
+}
+
+/* ===== BICEP CURL ===== */
+.curl-fig .ex-head { top: 1px; left: 12px; }
+.curl-fig .ex-torso { height: 10px; top: 6px; left: 13px; }
+.curl-fig .curl-arm { position: absolute; top: 7px; left: 16px; transform-origin: top; }
+.curl-fig .curl-forearm { width: 2px; height: 7px; background: var(--c); animation: curl-move 0.8s ease-in-out infinite; transform-origin: top; }
+.curl-fig .curl-weight { width: 4px; height: 3px; background: var(--c); border-radius: 1px; position: absolute; bottom: 0; left: -1px; animation: curl-move 0.8s ease-in-out infinite; transform-origin: top left; }
+@keyframes curl-move { 0%,100% { transform: rotate(0); } 50% { transform: rotate(-120deg); } }
+
+/* ===== OVERHEAD PRESS ===== */
+.ohp-fig .ex-head { top: 4px; left: 12px; }
+.ohp-fig .ex-torso { height: 10px; top: 9px; left: 13px; }
+.ohp-fig .ohp-arm.l { width: 2px; height: 6px; background: var(--c); position: absolute; top: 4px; left: 9px; }
+.ohp-fig .ohp-arm.r { width: 2px; height: 6px; background: var(--c); position: absolute; top: 4px; left: 17px; }
+.ohp-fig .ohp-bar { display: flex; align-items: center; position: absolute; top: 1px; left: 4px; animation: ohp-lift 1s ease-in-out infinite; }
+@keyframes ohp-lift { 0%,100% { transform: translateY(6px); } 50% { transform: translateY(0); } }
+
+/* ===== BENT ROW ===== */
+.row-fig .ex-head { top: 6px; left: 16px; }
+.row-fig .ex-torso { height: 10px; top: 8px; left: 13px; transform: rotate(-40deg); }
+.row-fig .row-arm { width: 2px; height: 6px; background: var(--c); position: absolute; top: 14px; left: 16px; animation: row-pull 0.8s ease-in-out infinite; transform-origin: top; }
+.row-fig .row-weight { width: 4px; height: 3px; background: var(--c); border-radius: 1px; position: absolute; top: 20px; left: 15px; animation: row-pull 0.8s ease-in-out infinite; }
+@keyframes row-pull { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+/* ===== PULLDOWN ===== */
+.pulldown-fig .ex-head { top: 3px; left: 12px; }
+.pulldown-fig .ex-torso { height: 10px; top: 8px; left: 13px; }
+.pulldown-fig .pd-arm.l { width: 2px; height: 7px; background: var(--c); position: absolute; top: 2px; left: 8px; animation: pd-l 0.9s ease-in-out infinite; transform-origin: bottom; }
+.pulldown-fig .pd-arm.r { width: 2px; height: 7px; background: var(--c); position: absolute; top: 2px; left: 18px; animation: pd-r 0.9s ease-in-out infinite; transform-origin: bottom; }
+.pulldown-fig .pd-bar { width: 18px; height: 2px; background: var(--c); position: absolute; top: 0; left: 5px; opacity: 0.4; }
+@keyframes pd-l { 0%,100% { transform: rotate(20deg); } 50% { transform: rotate(-10deg); } }
+@keyframes pd-r { 0%,100% { transform: rotate(-20deg); } 50% { transform: rotate(10deg); } }
+
+/* ===== LATERAL RAISE ===== */
+.latraise-fig .ex-head { top: 3px; left: 12px; }
+.latraise-fig .ex-torso { height: 10px; top: 8px; left: 13px; }
+.latraise-fig .lr-arm.l { width: 2px; height: 8px; background: var(--c); position: absolute; top: 8px; left: 9px; transform-origin: top; animation: lr-l 1s ease-in-out infinite; }
+.latraise-fig .lr-arm.r { width: 2px; height: 8px; background: var(--c); position: absolute; top: 8px; left: 17px; transform-origin: top; animation: lr-r 1s ease-in-out infinite; }
+@keyframes lr-l { 0%,100% { transform: rotate(0); } 50% { transform: rotate(-75deg); } }
+@keyframes lr-r { 0%,100% { transform: rotate(0); } 50% { transform: rotate(75deg); } }
+
+/* ===== LEG CURL ===== */
+.legcurl-fig .lc-body { width: 14px; height: 3px; background: var(--c); position: absolute; top: 12px; left: 2px; border-radius: 1px; }
+.legcurl-fig .lc-leg { width: 2px; height: 8px; background: var(--c); position: absolute; top: 12px; left: 14px; transform-origin: top left; animation: lc-curl 0.8s ease-in-out infinite; }
+@keyframes lc-curl { 0%,100% { transform: rotate(0); } 50% { transform: rotate(-110deg); } }
+
+/* ===== CHEST FLY ===== */
+.chestfly-fig .ex-head { top: 6px; left: 12px; }
+.chestfly-fig .ex-torso { height: 3px; top: 11px; left: 13px; }
+.chestfly-fig .cf-arm.l { width: 2px; height: 9px; background: var(--c); position: absolute; top: 7px; left: 9px; transform-origin: top; animation: cf-l 1s ease-in-out infinite; }
+.chestfly-fig .cf-arm.r { width: 2px; height: 9px; background: var(--c); position: absolute; top: 7px; left: 17px; transform-origin: top; animation: cf-r 1s ease-in-out infinite; }
+@keyframes cf-l { 0%,100% { transform: rotate(-60deg); } 50% { transform: rotate(-5deg); } }
+@keyframes cf-r { 0%,100% { transform: rotate(60deg); } 50% { transform: rotate(5deg); } }
+
+/* ===== YOGA POSES ===== */
+.ddog-fig .dd-body { width: 16px; height: 2px; background: var(--c); position: absolute; top: 10px; left: 6px; transform: rotate(-35deg); transform-origin: left; border-radius: 1px; }
+.ddog-fig { animation: ddog-breathe 3s ease-in-out infinite; }
+@keyframes ddog-breathe { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(1.05); } }
+
+.warrior-fig .ex-head { top: 3px; left: 12px; }
+.warrior-fig .ex-torso { height: 8px; top: 8px; left: 13px; }
+.warrior-fig .w-arm.l { width: 2px; height: 8px; background: var(--c); position: absolute; top: 9px; left: 6px; transform: rotate(-90deg); transform-origin: right; }
+.warrior-fig .w-arm.r { width: 2px; height: 8px; background: var(--c); position: absolute; top: 9px; left: 20px; transform: rotate(90deg); transform-origin: left; }
+.warrior-fig .w-leg.l { width: 2px; height: 8px; background: var(--c); position: absolute; top: 16px; left: 9px; transform: rotate(-30deg); }
+.warrior-fig .w-leg.r { width: 2px; height: 8px; background: var(--c); position: absolute; top: 16px; left: 17px; transform: rotate(15deg); }
+.warrior-fig { animation: warrior-sway 2.5s ease-in-out infinite; }
+@keyframes warrior-sway { 0%,100% { transform: rotate(0); } 50% { transform: rotate(2deg); } }
+
+.tree-fig .ex-head { top: 1px; left: 12px; }
+.tree-fig .ex-torso { height: 9px; top: 6px; left: 13px; }
+.tree-fig .t-arm.l { width: 2px; height: 7px; background: var(--c); position: absolute; top: 2px; left: 9px; transform: rotate(150deg); transform-origin: bottom; }
+.tree-fig .t-arm.r { width: 2px; height: 7px; background: var(--c); position: absolute; top: 2px; left: 17px; transform: rotate(-150deg); transform-origin: bottom; }
+.tree-fig .t-leg { width: 2px; height: 9px; background: var(--c); position: absolute; top: 15px; left: 13px; }
+.tree-fig { animation: tree-balance 2s ease-in-out infinite; }
+@keyframes tree-balance { 0%,100% { transform: rotate(-1deg); } 50% { transform: rotate(1deg); } }
+
+.child-fig .cp-body { width: 12px; height: 5px; background: var(--c); position: absolute; top: 13px; left: 8px; border-radius: 3px 3px 0 0; }
+.child-fig { animation: cp-breathe 3s ease-in-out infinite; }
+@keyframes cp-breathe { 0%,100% { transform: scaleX(1); } 50% { transform: scaleX(1.05); } }
+
+.pigeon-fig .pg-body { width: 14px; height: 4px; background: var(--c); position: absolute; top: 14px; left: 7px; border-radius: 2px; }
+.pigeon-fig { animation: pg-sink 2.5s ease-in-out infinite; }
+@keyframes pg-sink { 0%,100% { transform: translateY(0); } 50% { transform: translateY(2px); } }
+
+/* ===== CARDIO ===== */
+.walk-fig .ex-head { top: 2px; left: 12px; }
+.walk-fig .ex-torso { height: 9px; top: 7px; left: 13px; }
+.walk-fig .ex-leg.l { height: 8px; top: 16px; left: 11px; animation: walk-l 0.8s ease infinite; }
+.walk-fig .ex-leg.r { height: 8px; top: 16px; left: 15px; animation: walk-r 0.8s ease infinite; }
+@keyframes walk-l { 0%,100% { transform: rotate(-15deg); } 50% { transform: rotate(15deg); } }
+@keyframes walk-r { 0%,100% { transform: rotate(15deg); } 50% { transform: rotate(-15deg); } }
+
+.run-fig .ex-head { top: 2px; left: 13px; }
+.run-fig .ex-torso { height: 8px; top: 7px; left: 13px; transform: rotate(-8deg); }
+.run-fig .ex-leg.l { height: 8px; top: 14px; left: 11px; animation: run-l 0.4s ease infinite; }
+.run-fig .ex-leg.r { height: 8px; top: 14px; left: 15px; animation: run-r 0.4s ease infinite; }
+.run-fig .ex-arm.l { height: 6px; top: 8px; left: 10px; animation: runa-l 0.4s ease infinite; }
+.run-fig .ex-arm.r { height: 6px; top: 8px; left: 16px; animation: runa-r 0.4s ease infinite; }
+@keyframes run-l { 0%,100% { transform: rotate(-30deg); } 50% { transform: rotate(30deg); } }
+@keyframes run-r { 0%,100% { transform: rotate(30deg); } 50% { transform: rotate(-30deg); } }
+@keyframes runa-l { 0%,100% { transform: rotate(20deg); } 50% { transform: rotate(-20deg); } }
+@keyframes runa-r { 0%,100% { transform: rotate(-20deg); } 50% { transform: rotate(20deg); } }
+
+.sprint-fig .ex-head { top: 2px; left: 14px; }
+.sprint-fig .ex-torso { height: 8px; top: 7px; left: 13px; transform: rotate(-15deg); }
+.sprint-fig .ex-leg.l { height: 8px; top: 14px; left: 11px; animation: run-l 0.25s ease infinite; }
+.sprint-fig .ex-leg.r { height: 8px; top: 14px; left: 15px; animation: run-r 0.25s ease infinite; }
+.sprint-fig .ex-arm.l { height: 6px; top: 8px; left: 10px; animation: runa-l 0.25s ease infinite; }
+.sprint-fig .ex-arm.r { height: 6px; top: 8px; left: 16px; animation: runa-r 0.25s ease infinite; }
+.sprint-fig .sp-lines { position: absolute; left: 1px; top: 12px; }
+.sprint-fig .sp-lines span { display: block; width: 5px; height: 1px; background: var(--c); margin: 2px 0; opacity: 0; animation: sp-line 0.4s ease-out infinite; }
+.sprint-fig .sp-lines span:nth-child(2) { animation-delay: 0.12s; }
+.sprint-fig .sp-lines span:nth-child(3) { animation-delay: 0.24s; }
+@keyframes sp-line { 0% { opacity: 0.7; transform: translateX(0); } 100% { opacity: 0; transform: translateX(-5px); } }
+
+.incline-fig .ex-head { top: 0; left: 12px; }
+.incline-fig .ex-torso { height: 8px; top: 5px; left: 13px; transform: rotate(-12deg); }
+.incline-fig .ex-leg.l { height: 7px; top: 13px; left: 11px; animation: walk-l 0.7s ease infinite; }
+.incline-fig .ex-leg.r { height: 7px; top: 13px; left: 15px; animation: walk-r 0.7s ease infinite; }
+.incline-fig .inc-slope { width: 22px; height: 2px; background: var(--c); opacity: 0.2; position: absolute; bottom: 3px; left: 3px; transform: rotate(-10deg); }
+
+.jrope-fig .ex-head { top: 1px; left: 12px; }
+.jrope-fig .ex-torso { height: 9px; top: 6px; left: 13px; }
+.jrope-fig .jr-rope { width: 18px; height: 18px; border: 1px solid var(--c); border-radius: 50%; position: absolute; top: 2px; left: 5px; opacity: 0.4; animation: jr-spin 0.5s linear infinite; clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%); }
+.jrope-fig { animation: jr-jump 0.5s ease-in-out infinite; }
+@keyframes jr-jump { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes jr-spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+
+.row-machine-fig .ex-head { top: 8px; left: 18px; }
+.row-machine-fig .rm-body { width: 2px; height: 8px; background: var(--c); position: absolute; top: 12px; left: 14px; transform: rotate(-20deg); }
+.row-machine-fig .rm-arm { width: 2px; height: 6px; background: var(--c); position: absolute; top: 10px; left: 17px; animation: rm-pull 1s ease-in-out infinite; transform-origin: top; }
+.row-machine-fig .rm-handle { width: 6px; height: 2px; background: var(--c); position: absolute; top: 14px; left: 19px; opacity: 0.5; animation: rm-handle 1s ease-in-out infinite; }
+@keyframes rm-pull { 0%,100% { transform: rotate(30deg); } 50% { transform: rotate(-20deg); } }
+@keyframes rm-handle { 0%,100% { transform: translateX(0); } 50% { transform: translateX(-5px); } }
+
+.bropes-fig .ex-head { top: 2px; left: 12px; }
+.bropes-fig .ex-torso { height: 9px; top: 7px; left: 13px; }
+.bropes-fig .br-arm.l { width: 2px; height: 6px; background: var(--c); position: absolute; top: 8px; left: 9px; transform-origin: top; animation: br-al 0.3s ease infinite; }
+.bropes-fig .br-arm.r { width: 2px; height: 6px; background: var(--c); position: absolute; top: 8px; left: 17px; transform-origin: top; animation: br-ar 0.3s ease infinite; }
+.bropes-fig .br-rope.l { width: 1px; height: 10px; background: var(--c); opacity: 0.5; position: absolute; top: 14px; left: 6px; animation: br-rl 0.3s ease infinite; }
+.bropes-fig .br-rope.r { width: 1px; height: 10px; background: var(--c); opacity: 0.5; position: absolute; top: 14px; left: 20px; animation: br-rr 0.3s ease infinite; }
+@keyframes br-al { 0%,100% { transform: rotate(-15deg); } 50% { transform: rotate(15deg); } }
+@keyframes br-ar { 0%,100% { transform: rotate(15deg); } 50% { transform: rotate(-15deg); } }
+@keyframes br-rl { 0%,100% { transform: scaleY(1) translateY(0); } 50% { transform: scaleY(0.8) translateY(-2px); } }
+@keyframes br-rr { 0%,100% { transform: scaleY(0.8) translateY(-2px); } 50% { transform: scaleY(1) translateY(0); } }
+
+/* ===== MOBILITY ===== */
+.froll-fig .fr-body { width: 12px; height: 3px; background: var(--c); position: absolute; top: 11px; left: 8px; border-radius: 1px; }
+.froll-fig .fr-roller { width: 6px; height: 6px; border-radius: 50%; border: 2px solid var(--c); position: absolute; top: 14px; left: 11px; animation: fr-roll 1s ease-in-out infinite; }
+@keyframes fr-roll { 0%,100% { transform: translateX(-3px); } 50% { transform: translateX(3px); } }
+
+.hipcircle-fig .ex-head { top: 2px; left: 12px; }
+.hipcircle-fig .ex-torso { height: 9px; top: 7px; left: 13px; }
+.hipcircle-fig .hc-leg { width: 2px; height: 8px; background: var(--c); position: absolute; top: 16px; left: 15px; transform-origin: top; animation: hc-circle 1.2s linear infinite; }
+@keyframes hc-circle {
+  0% { transform: rotate(0); } 25% { transform: rotate(30deg); }
+  50% { transform: rotate(0); } 75% { transform: rotate(-30deg); } 100% { transform: rotate(0); }
+}
+
+.catcow-fig .cc-body { width: 16px; height: 3px; background: var(--c); position: absolute; top: 14px; left: 6px; border-radius: 2px; animation: cc-flex 1.5s ease-in-out infinite; }
+@keyframes cc-flex { 0%,100% { border-radius: 2px 2px 8px 8px; } 50% { border-radius: 8px 8px 2px 2px; } }
+
+.ltwist-fig .ex-head { top: 3px; left: 12px; }
+.ltwist-fig .ex-torso { height: 8px; top: 8px; left: 13px; }
+.ltwist-fig .lt-arm { width: 2px; height: 8px; background: var(--c); position: absolute; top: 4px; left: 15px; transform-origin: bottom; animation: lt-twist 1.5s ease-in-out infinite; }
+.ltwist-fig .ex-leg.l { height: 8px; top: 16px; left: 10px; transform: rotate(-25deg); }
+.ltwist-fig .ex-leg.r { height: 8px; top: 16px; left: 16px; transform: rotate(10deg); }
+@keyframes lt-twist { 0%,100% { transform: rotate(-30deg); } 50% { transform: rotate(60deg); } }
+
+.spass-fig .ex-head { top: 3px; left: 12px; }
+.spass-fig .ex-torso { height: 9px; top: 8px; left: 13px; }
+.spass-fig .sp-arm { width: 2px; height: 8px; background: var(--c); position: absolute; top: 4px; left: 13px; transform-origin: bottom center; animation: sp-pass 2s ease-in-out infinite; }
+.spass-fig .sp-stick { width: 14px; height: 2px; background: var(--c); position: absolute; top: 2px; left: 6px; opacity: 0.4; animation: sp-bar 2s ease-in-out infinite; }
+@keyframes sp-pass { 0%,100% { transform: rotate(-90deg); } 50% { transform: rotate(90deg); } }
+@keyframes sp-bar { 0%,100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
