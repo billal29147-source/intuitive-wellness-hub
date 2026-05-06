@@ -140,7 +140,9 @@ const WorkoutPage = () => {
                   ...w.tips,
                 ]}
                 rightContent={<WorkoutAnimation name={w.name} color={w.color} />}
-              />
+              >
+                <ExerciseList exercises={getExercisesForWorkout(w.name, user)} color={w.color} />
+              </ExpandableTipCard>
             ))}
           </div>
 
